@@ -39,6 +39,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gen_ccs.html">CSS repulsive potential generation (2-body)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
@@ -70,7 +71,7 @@
   <h1>Source code for ccs.fitting.spline_functions</h1><div class="highlight"><pre>
 <span></span><span class="c1"># ------------------------------------------------------------------------------#</span>
 <span class="c1">#  CCS: Curvature Constrained Splines                                          #</span>
-<span class="c1">#  Copyright (C) 2019 - 2021  CCS developers group                             #</span>
+<span class="c1">#  Copyright (C) 2019 - 2022  CCS developers group                             #</span>
 <span class="c1">#                                                                              #</span>
 <span class="c1">#  See the LICENSE file for terms of usage and distribution.                   #</span>
 <span class="c1"># ------------------------------------------------------------------------------#</span>
@@ -81,20 +82,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">c_int</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">bisect</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">scipy.linalg</span> <span class="k">as</span> <span class="nn">linalg</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">ccs.data.conversion</span> <span class="kn">import</span> <span class="n">Bohr__AA</span><span class="p">,</span> <span class="n">eV__Hartree</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">block_diag</span>
 
-
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-
 
 <div class="viewcode-block" id="Twobody"><a class="viewcode-back" href="../../../autoapi/ccs/fitting/spline_functions/index.html#ccs.fitting.spline_functions.Twobody">[docs]</a><span class="k">class</span> <span class="nc">Twobody</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Twobody class that describes properties of an Atom pair.&quot;&quot;&quot;</span>
