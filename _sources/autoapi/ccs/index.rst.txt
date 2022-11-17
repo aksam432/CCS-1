@@ -25,11 +25,8 @@ Functions
 
 .. autoapisummary::
 
-   ccs.ccs_build_db
-   ccs.ccs_export_sktable
    ccs.ccs_fetch
    ccs.ccs_fit
-   ccs.ccs_validate
 
 
 
@@ -46,23 +43,30 @@ Attributes
 
    
 
-.. py:function:: ccs_build_db()
+.. py:function:: ccs_fetch(mode=None, DFT_DB=None, R_c=6.0, Ns='all', DFTB_DB=None, charge_dict=None)
+
+   Function to read files and output structures.json
+
+   Input
+   -----
+       args : list
+           list of filenames
+       R_c : float
+           optional: Distance cut-off. Defaults to 7.0.
+
+   :returns: **structures.json** -- Collection of structures in .json format.
+   :rtype: JSON file
+
+   .. rubric:: Example
+
+   To be added.
 
 
-.. py:function:: ccs_export_sktable()
+.. py:function:: ccs_fit(filename)
 
+   Parses the input files and fits the reference data.
 
-.. py:function:: ccs_fetch()
-
-
-.. py:function:: ccs_fit(cmdlineargs=None)
-
-   Main driver routine for ccs_fit.
-
-   :param cmdlineargs: list of command line arguments
-                       When None, arguments in sys.argv are parsed (default: None)
-
-
-.. py:function:: ccs_validate()
+   :param filename: The input file (input.json).
+   :type filename: str
 
 
