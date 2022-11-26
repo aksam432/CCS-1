@@ -56,14 +56,14 @@ File [0;32m~/work/CCS-Q/CCS-Q/src/ccs/fitting/main.py:361[0m, in [0;36mtwp_fi
 [1;32m    360[0m [38;5;66;03m# Solve QP problem[39;00m
 [0;32m--> 361[0m predicted_energies, mse, xx_unfolded [38;5;241m=[39m [43mnn[49m[38;5;241;43m.[39;49m[43msolution[49m[43m([49m[43m)[49m
 
-File [0;32m~/work/CCS-Q/CCS-Q/src/ccs/fitting/objective.py:171[0m, in [0;36mObjective.solution[0;34m(self)[0m
-[1;32m    169[0m [38;5;28;01mfor[39;00m ii [38;5;129;01min[39;00m [38;5;28mrange[39m([38;5;28mself[39m[38;5;241m.[39mnp):
-[1;32m    170[0m     [38;5;28mself[39m[38;5;241m.[39ml_twb[ii][38;5;241m.[39mget_spline_coeffs()
-[0;32m--> 171[0m     [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43ml_twb[49m[43m[[49m[43mii[49m[43m][49m[38;5;241;43m.[39;49m[43mget_expcoeffs[49m[43m([49m[43m)[49m
-[1;32m    172[0m     x_unfolded [38;5;241m=[39m np[38;5;241m.[39mhstack(
-[1;32m    173[0m         (x_unfolded, np[38;5;241m.[39marray([38;5;28mself[39m[38;5;241m.[39ml_twb[ii][38;5;241m.[39mcurvatures)[38;5;241m.[39mflatten())
-[1;32m    174[0m     )
-[1;32m    175[0m [38;5;28;01mfor[39;00m onb [38;5;129;01min[39;00m [38;5;28mself[39m[38;5;241m.[39ml_one:
+File [0;32m~/work/CCS-Q/CCS-Q/src/ccs/fitting/objective.py:172[0m, in [0;36mObjective.solution[0;34m(self)[0m
+[1;32m    170[0m     [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mDEBUG: Current pair [39m[38;5;132;01m{[39;00m[38;5;28mself[39m[38;5;241m.[39ml_twb[ii][38;5;241m.[39mname[38;5;132;01m}[39;00m[38;5;124m has [39m[38;5;132;01m{[39;00m([38;5;28mself[39m[38;5;241m.[39ml_twb[ii][38;5;241m.[39mN)[38;5;132;01m}[39;00m[38;5;124m knots and [39m[38;5;132;01m{[39;00m([38;5;28mself[39m[38;5;241m.[39ml_twb[ii][38;5;241m.[39mA)[38;5;132;01m}[39;00m[38;5;124m coefficients.[39m[38;5;124m"[39m)
+[1;32m    171[0m     [38;5;28mself[39m[38;5;241m.[39ml_twb[ii][38;5;241m.[39mget_spline_coeffs()
+[0;32m--> 172[0m     [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43ml_twb[49m[43m[[49m[43mii[49m[43m][49m[38;5;241;43m.[39;49m[43mget_expcoeffs[49m[43m([49m[43m)[49m
+[1;32m    173[0m     x_unfolded [38;5;241m=[39m np[38;5;241m.[39mhstack(
+[1;32m    174[0m         (x_unfolded, np[38;5;241m.[39marray([38;5;28mself[39m[38;5;241m.[39ml_twb[ii][38;5;241m.[39mcurvatures)[38;5;241m.[39mflatten())
+[1;32m    175[0m     )
+[1;32m    176[0m [38;5;28;01mfor[39;00m onb [38;5;129;01min[39;00m [38;5;28mself[39m[38;5;241m.[39ml_one:
 
 File [0;32m~/work/CCS-Q/CCS-Q/src/ccs/fitting/spline_functions.py:344[0m, in [0;36mTwobody.get_expcoeffs[0;34m(self)[0m
 [1;32m    321[0m [38;5;124;03m"""Calculates coefficients of exponential function.[39;00m
