@@ -78,7 +78,9 @@
 <a class="reference external" href="https://github.com/Teoroo-CMC/CCS/actions"><img alt="Build" src="https://img.shields.io/github/workflow/status/teoroo-cmc/CCS/ci-cd" /></a></p>
 <!--- [![Build Status](https://github.com/tblite/tblite/workflows/CI/badge.svg)](https://github.com/tblite/tblite/actions)
 [![Documentation](https://img.shields.io/badge/Github%20Pages-Pages-blue)](https://teoroo-cmc.github.io/CCS/)
-[![codecov](https://codecov.io/gh/tblite/tblite/branch/main/graph/badge.svg?token=JXIE6myqNH)](https://codecov.io/gh/tblite/tblite) --->
+[![codecov](https://codecov.io/gh/tblite/tblite/branch/main/graph/badge.svg?token=JXIE6myqNH)](https://codecov.io/gh/tblite/tblite) 
+[![Coverage](codecov.io/gh/:vcsName/:user/:repo?flag=flag_name&token=a1b2c3d4e5)(https://github.com/Teoroo-CMC/CCS/actions)
+--->
 <p>The <code class="docutils literal notranslate"><span class="pre">CCS</span></code> package is a tool to construct two-body potentials using the idea of curvature constrained splines.</p>
 <section id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h2>
@@ -157,8 +159,10 @@ python setup.py install
 </section>
 <section id="installing-from-source-using-poetry">
 <h3>Installing from source using poetry<a class="headerlink" href="#installing-from-source-using-poetry" title="Permalink to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">poetry</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Teoroo</span><span class="o">-</span><span class="n">CMC</span><span class="o">/</span><span class="n">CCS</span><span class="nd">@master</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Teoroo</span><span class="o">-</span><span class="n">CMC</span><span class="o">/</span><span class="n">CCS</span><span class="o">.</span><span class="n">git</span> <span class="n">CCS</span>
+<span class="n">cd</span> <span class="n">CCS</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="n">poetry</span>
+<span class="n">poetry</span> <span class="n">install</span> 
 </pre></div>
 </div>
 </section>
@@ -260,7 +264,13 @@ conda develop &lt;path-to-CCS-package&gt;
 <li><p><strong>Akshay Krishna AK</strong></p></li>
 <li><p><strong>Jolla Kullgren</strong></p></li>
 <li><p><strong>Eddie Wadbro</strong></p></li>
+<li><p><strong>Peter Broqvist</strong></p></li>
+<li><p><strong>Thijs Smolders</strong></p></li>
 </ul>
+</section>
+<section id="funding">
+<h2>Funding<a class="headerlink" href="#funding" title="Permalink to this heading"></a></h2>
+<p>This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 957189.</p>
 </section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this heading"></a></h2>

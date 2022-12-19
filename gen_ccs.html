@@ -80,26 +80,26 @@
 <p>Output: CCS parameters and fit of predicted energies vs. those in the DFT database</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span>
-<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">io</span>
-<span class="kn">from</span> <span class="nn">ase.calculators.neighborlist</span> <span class="kn">import</span> <span class="n">NeighborList</span>
-<span class="kn">import</span> <span class="nn">ase.db</span> <span class="k">as</span> <span class="nn">db</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span> 
-<span class="kn">from</span> <span class="nn">ccs.scripts.ccs_fetch</span> <span class="kn">import</span> <span class="n">ccs_fetch</span> <span class="k">as</span> <span class="n">ccs_fetch</span>
-<span class="kn">from</span> <span class="nn">ccs.fitting.main</span> <span class="kn">import</span> <span class="n">twp_fit</span> <span class="k">as</span> <span class="n">ccs_fit</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import os, sys, warnings
+import json
+import itertools as it
+from collections import OrderedDict, defaultdict
+import numpy as np
+from ase import Atoms
+from ase import io
+from ase.calculators.neighborlist import NeighborList
+import ase.db as db
+from tqdm import tqdm 
+from ccs.scripts.ccs_fetch import ccs_fetch as ccs_fetch
+from ccs.fitting.main import twp_fit as ccs_fit
 
-<span class="kn">from</span> <span class="nn">ccs.common.exceptions</span> <span class="kn">import</span> <span class="n">ScriptError</span> 
-<span class="kn">from</span> <span class="nn">ccs.ase_calculator.ccs_ase_calculator</span> <span class="kn">import</span> <span class="n">CCS</span>
+from ccs.common.exceptions import ScriptError 
+from ccs.ase_calculator.ccs_ase_calculator import CCS
 
-<span class="n">base_dir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Base dir is:&#39;</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+base_dir=os.getcwd()
+os.chdir(base_dir)
+print(&#39;Base dir is:&#39;, base_dir)
+warnings.filterwarnings(&#39;ignore&#39;)
 </pre></div>
 </div>
 </div>
@@ -115,28 +115,28 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#generate data generates trainingset in the format for CCS (structures.json)</span>
-<span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cwd</span><span class="o">+</span><span class="s2">&quot;/CCS/&quot;</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">cwd</span><span class="o">+</span><span class="s2">&quot;/CCS/&quot;</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="o">+</span><span class="s2">&quot;/CCS/&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#generate data generates trainingset in the format for CCS (structures.json)
+cwd = os.getcwd()
+if not os.path.isdir(cwd+&quot;/CCS/&quot;):
+    os.mkdir(cwd+&quot;/CCS/&quot;)
+os.chdir(cwd+&quot;/CCS/&quot;)
 
-<span class="c1">### Cleaning up old files</span>
+### Cleaning up old files
 
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;CCS_DB.db&#39;</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;CCS_DB.db&#39;</span><span class="p">)</span>
+if os.path.isfile(&#39;CCS_DB.db&#39;):
+    os.remove(&#39;CCS_DB.db&#39;)
 
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;ccs.spl&#39;</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;ccs.spl&#39;</span><span class="p">)</span>
+if os.path.isfile(&#39;ccs.spl&#39;):
+    os.remove(&#39;ccs.spl&#39;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#generate data generates trainingset in the format for CCS (structures.json)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#generate data generates trainingset in the format for CCS (structures.json)
 
-<span class="n">ccs_fetch</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;CCS&#39;</span><span class="p">,</span> <span class="n">R_c</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">Ns</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">DFT_DB</span><span class="o">=</span><span class="s1">&#39;../DFT_DB.db&#39;</span><span class="p">,</span> <span class="n">DFTB_DB</span><span class="o">=</span><span class="s1">&#39;../DFT_DB.db&#39;</span><span class="p">)</span>
+ccs_fetch(mode=&#39;CCS&#39;, R_c=6.0, Ns=&#39;all&#39;, DFT_DB=&#39;../DFT_DB.db&#39;, DFTB_DB=&#39;../DFT_DB.db&#39;)
 </pre></div>
 </div>
 </div>
@@ -144,130 +144,124 @@
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/999 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  2%|▏         | 21/999 [00:00&lt;00:04, 207.25it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  2%|▏         | 16/999 [00:00&lt;00:06, 158.21it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▍         | 46/999 [00:00&lt;00:04, 229.26it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  4%|▍         | 43/999 [00:00&lt;00:04, 222.12it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  7%|▋         | 72/999 [00:00&lt;00:03, 239.36it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  7%|▋         | 70/999 [00:00&lt;00:03, 241.37it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 10%|▉         | 98/999 [00:00&lt;00:03, 245.74it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 10%|▉         | 98/999 [00:00&lt;00:03, 253.86it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 12%|█▏        | 124/999 [00:00&lt;00:03, 248.68it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 13%|█▎        | 126/999 [00:00&lt;00:03, 260.16it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 15%|█▌        | 150/999 [00:00&lt;00:03, 250.49it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 15%|█▌        | 154/999 [00:00&lt;00:03, 264.41it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 18%|█▊        | 176/999 [00:00&lt;00:03, 252.31it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 18%|█▊        | 182/999 [00:00&lt;00:03, 267.63it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 20%|██        | 203/999 [00:00&lt;00:03, 255.90it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 21%|██        | 210/999 [00:00&lt;00:02, 270.12it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 23%|██▎       | 229/999 [00:00&lt;00:02, 257.13it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 24%|██▍       | 238/999 [00:00&lt;00:02, 270.95it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 26%|██▌       | 256/999 [00:01&lt;00:02, 258.72it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 27%|██▋       | 266/999 [00:01&lt;00:02, 271.74it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 28%|██▊       | 282/999 [00:01&lt;00:02, 258.81it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 29%|██▉       | 294/999 [00:01&lt;00:02, 272.35it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 31%|███       | 309/999 [00:01&lt;00:02, 259.35it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 32%|███▏      | 322/999 [00:01&lt;00:02, 272.98it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 34%|███▎      | 336/999 [00:01&lt;00:02, 259.69it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 35%|███▌      | 350/999 [00:01&lt;00:02, 272.60it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 36%|███▌      | 362/999 [00:01&lt;00:02, 259.68it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 38%|███▊      | 378/999 [00:01&lt;00:02, 273.06it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 39%|███▉      | 388/999 [00:01&lt;00:02, 258.74it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 41%|████      | 406/999 [00:01&lt;00:02, 272.87it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 42%|████▏     | 415/999 [00:01&lt;00:02, 259.41it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 43%|████▎     | 434/999 [00:01&lt;00:02, 273.31it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 44%|████▍     | 441/999 [00:01&lt;00:02, 259.42it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 46%|████▌     | 462/999 [00:01&lt;00:01, 273.71it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 47%|████▋     | 468/999 [00:01&lt;00:02, 260.56it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 49%|████▉     | 490/999 [00:01&lt;00:01, 273.38it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 50%|████▉     | 495/999 [00:01&lt;00:01, 255.22it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 52%|█████▏    | 518/999 [00:01&lt;00:02, 238.41it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 52%|█████▏    | 521/999 [00:02&lt;00:02, 221.55it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 54%|█████▍    | 543/999 [00:02&lt;00:02, 219.06it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 54%|█████▍    | 544/999 [00:02&lt;00:02, 204.55it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 57%|█████▋    | 566/999 [00:02&lt;00:02, 207.67it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 57%|█████▋    | 566/999 [00:02&lt;00:02, 193.84it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 59%|█████▉    | 588/999 [00:02&lt;00:02, 199.82it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 59%|█████▊    | 586/999 [00:02&lt;00:02, 180.12it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 61%|██████    | 609/999 [00:02&lt;00:02, 194.21it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 61%|██████    | 605/999 [00:02&lt;00:02, 168.37it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 63%|██████▎   | 629/999 [00:02&lt;00:01, 190.13it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 62%|██████▏   | 623/999 [00:02&lt;00:02, 164.30it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 65%|██████▍   | 649/999 [00:02&lt;00:01, 187.42it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 64%|██████▍   | 640/999 [00:02&lt;00:02, 158.60it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 67%|██████▋   | 668/999 [00:02&lt;00:01, 185.67it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 66%|██████▌   | 656/999 [00:02&lt;00:02, 156.77it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 69%|██████▉   | 687/999 [00:02&lt;00:01, 185.80it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 67%|██████▋   | 673/999 [00:03&lt;00:02, 159.80it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 71%|███████▏  | 713/999 [00:03&lt;00:01, 206.66it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 69%|██████▉   | 693/999 [00:03&lt;00:01, 169.34it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 74%|███████▍  | 741/999 [00:03&lt;00:01, 226.30it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 72%|███████▏  | 719/999 [00:03&lt;00:01, 193.69it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 77%|███████▋  | 769/999 [00:03&lt;00:00, 240.82it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 75%|███████▍  | 745/999 [00:03&lt;00:01, 212.21it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 80%|███████▉  | 797/999 [00:03&lt;00:00, 251.38it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 77%|███████▋  | 771/999 [00:03&lt;00:01, 225.72it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 83%|████████▎ | 825/999 [00:03&lt;00:00, 258.27it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 80%|███████▉  | 798/999 [00:03&lt;00:00, 236.47it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 85%|████████▌ | 853/999 [00:03&lt;00:00, 261.23it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 82%|████████▏ | 824/999 [00:03&lt;00:00, 243.13it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 88%|████████▊ | 880/999 [00:03&lt;00:00, 254.75it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 85%|████████▌ | 851/999 [00:03&lt;00:00, 249.15it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 91%|█████████ | 906/999 [00:03&lt;00:00, 227.07it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 88%|████████▊ | 877/999 [00:03&lt;00:00, 244.43it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 93%|█████████▎| 930/999 [00:03&lt;00:00, 208.37it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 90%|█████████ | 902/999 [00:04&lt;00:00, 217.34it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 95%|█████████▌| 952/999 [00:04&lt;00:00, 196.91it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 93%|█████████▎| 925/999 [00:04&lt;00:00, 197.85it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 97%|█████████▋| 973/999 [00:04&lt;00:00, 191.12it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 95%|█████████▍| 946/999 [00:04&lt;00:00, 186.59it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 99%|█████████▉| 993/999 [00:04&lt;00:00, 187.04it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 97%|█████████▋| 966/999 [00:04&lt;00:00, 179.57it/s]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 99%|█████████▊| 985/999 [00:04&lt;00:00, 176.65it/s]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 999/999 [00:04&lt;00:00, 215.46it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 999/999 [00:04&lt;00:00, 230.72it/s]
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
@@ -277,26 +271,26 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#DEFINE INPUT</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#DEFINE INPUT
 
-<span class="nb">input</span><span class="o">=</span><span class="p">{</span>
-    <span class="s2">&quot;General&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;interface&quot;</span><span class="p">:</span> <span class="s2">&quot;CCS&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;Twobody&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;Xx-Xx&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;Rcut&quot;</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span>
-                        <span class="s2">&quot;Resolution&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
-                        <span class="s2">&quot;Swtype&quot;</span><span class="p">:</span> <span class="s2">&quot;rep&quot;</span>
-                <span class="p">}</span>
-        <span class="p">}</span>
-<span class="p">}</span>
-<span class="c1">#SAVE TO FILE</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;input.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+input={
+    &quot;General&quot;: {
+        &quot;interface&quot;: &quot;CCS&quot;
+    },
+    &quot;Twobody&quot;: {
+                &quot;Xx-Xx&quot;: {
+                        &quot;Rcut&quot;: 6.0,
+                        &quot;Resolution&quot;: 0.05,
+                        &quot;Swtype&quot;: &quot;rep&quot;
+                }
+        }
+}
+#SAVE TO FILE
+with open(&#39;input.json&#39;, &#39;w&#39;) as f:
+    json.dump(input, f, indent=8)
     
-<span class="c1">#RUN FIT</span>
-<span class="n">ccs_fit</span><span class="p">(</span><span class="s2">&quot;input.json&quot;</span><span class="p">)</span>
+#RUN FIT
+ccs_fit(&quot;input.json&quot;)
 </pre></div>
 </div>
 </div>
@@ -319,153 +313,13 @@ Generating two-body potentials from one-body information.
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Finding optimum switch:   0%|          | 0/1 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Finding optimum switch: 100%|██████████| 1/1 [00:01&lt;00:00,  1.29s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Finding optimum switch: 100%|██████████| 1/1 [00:04&lt;00:00,  4.85s/it]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Finding optimum switch: 100%|██████████| 1/1 [00:01&lt;00:00,  1.29s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Finding optimum switch: 100%|██████████| 1/1 [00:04&lt;00:00,  4.85s/it]
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DEBUG: Current pair C-C has 98 knots and [[ 0.          0.16666667  1.         ... 94.         95.
-  47.83333333]
- [ 0.          0.          0.16666667 ... 93.         94.
-  47.33333333]
- [ 0.          0.          0.         ... 92.         93.
-  46.83333333]
- ...
- [ 0.          0.          0.         ...  0.16666667  1.
-   0.83333333]
- [ 0.          0.          0.         ...  0.          0.16666667
-   0.33333333]
- [ 0.          0.          0.         ...  0.          0.
-   0.        ]] coefficients.
-DEBUG: Current pair C-H has 103 knots and [[  0.           0.16666667   1.         ...  99.         100.
-   50.33333333]
- [  0.           0.           0.16666667 ...  98.          99.
-   49.83333333]
- [  0.           0.           0.         ...  97.          98.
-   49.33333333]
- ...
- [  0.           0.           0.         ...   0.16666667   1.
-    0.83333333]
- [  0.           0.           0.         ...   0.           0.16666667
-    0.33333333]
- [  0.           0.           0.         ...   0.           0.
-    0.        ]] coefficients.
-DEBUG: Current pair C-Li has 83 knots and [[ 0.          0.16666667  1.         ... 79.         80.
-  40.33333333]
- [ 0.          0.          0.16666667 ... 78.         79.
-  39.83333333]
- [ 0.          0.          0.         ... 77.         78.
-  39.33333333]
- ...
- [ 0.          0.          0.         ...  0.16666667  1.
-   0.83333333]
- [ 0.          0.          0.         ...  0.          0.16666667
-   0.33333333]
- [ 0.          0.          0.         ...  0.          0.
-   0.        ]] coefficients.
-DEBUG: Current pair C-O has 99 knots and [[ 0.          0.16666667  1.         ... 95.         96.
-  48.33333333]
- [ 0.          0.          0.16666667 ... 94.         95.
-  47.83333333]
- [ 0.          0.          0.         ... 93.         94.
-  47.33333333]
- ...
- [ 0.          0.          0.         ...  0.16666667  1.
-   0.83333333]
- [ 0.          0.          0.         ...  0.          0.16666667
-   0.33333333]
- [ 0.          0.          0.         ...  0.          0.
-   0.        ]] coefficients.
-DEBUG: Current pair H-H has 109 knots and [[  0.           0.16666667   1.         ... 105.         106.
-   53.33333333]
- [  0.           0.           0.16666667 ... 104.         105.
-   52.83333333]
- [  0.           0.           0.         ... 103.         104.
-   52.33333333]
- ...
- [  0.           0.           0.         ...   0.16666667   1.
-    0.83333333]
- [  0.           0.           0.         ...   0.           0.16666667
-    0.33333333]
- [  0.           0.           0.         ...   0.           0.
-    0.        ]] coefficients.
-DEBUG: Current pair H-Li has 81 knots and [[ 0.          0.16666667  1.         ... 77.         78.
-  39.33333333]
- [ 0.          0.          0.16666667 ... 76.         77.
-  38.83333333]
- [ 0.          0.          0.         ... 75.         76.
-  38.33333333]
- ...
- [ 0.          0.          0.         ...  0.16666667  1.
-   0.83333333]
- [ 0.          0.          0.         ...  0.          0.16666667
-   0.33333333]
- [ 0.          0.          0.         ...  0.          0.
-   0.        ]] coefficients.
-DEBUG: Current pair H-O has 106 knots and [[  0.           0.16666667   1.         ... 102.         103.
-   51.83333333]
- [  0.           0.           0.16666667 ... 101.         102.
-   51.33333333]
- [  0.           0.           0.         ... 100.         101.
-   50.83333333]
- ...
- [  0.           0.           0.         ...   0.16666667   1.
-    0.83333333]
- [  0.           0.           0.         ...   0.           0.16666667
-    0.33333333]
- [  0.           0.           0.         ...   0.           0.
-    0.        ]] coefficients.
-DEBUG: Current pair Li-Li has 2 knots and [[0. 0.]] coefficients.
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">IndexError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">20</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="c1">#RUN FIT</span>
-<span class="ne">---&gt; </span><span class="mi">20</span> <span class="n">ccs_fit</span><span class="p">(</span><span class="s2">&quot;input.json&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/work/CCS-Q/CCS-Q/src/ccs/fitting/main.py:361,</span> in <span class="ni">twp_fit</span><span class="nt">(filename)</span>
-<span class="g g-Whitespace">    </span><span class="mi">349</span> <span class="n">nn</span> <span class="o">=</span> <span class="n">Objective</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">350</span>     <span class="n">atom_pairs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">351</span>     <span class="n">atom_onebodies</span><span class="p">,</span>
-   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">357</span>     <span class="n">ewald_forces</span><span class="o">=</span><span class="n">ewald_forces</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">358</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">360</span> <span class="c1"># Solve QP problem</span>
-<span class="ne">--&gt; </span><span class="mi">361</span> <span class="n">predicted_energies</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="n">xx_unfolded</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">solution</span><span class="p">()</span>
-
-<span class="nn">File ~/work/CCS-Q/CCS-Q/src/ccs/fitting/objective.py:172,</span> in <span class="ni">Objective.solution</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">170</span>     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DEBUG: Current pair </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">l_twb</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_twb</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">N</span><span class="p">)</span><span class="si">}</span><span class="s2"> knots and </span><span class="si">{</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_twb</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">A</span><span class="p">)</span><span class="si">}</span><span class="s2"> coefficients.&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">171</span>     <span class="bp">self</span><span class="o">.</span><span class="n">l_twb</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">get_spline_coeffs</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">172</span>     <span class="bp">self</span><span class="o">.</span><span class="n">l_twb</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">get_expcoeffs</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">173</span>     <span class="n">x_unfolded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">174</span>         <span class="p">(</span><span class="n">x_unfolded</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_twb</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">curvatures</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-<span class="g g-Whitespace">    </span><span class="mi">175</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">176</span> <span class="k">for</span> <span class="n">onb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_one</span><span class="p">:</span>
-
-<span class="nn">File ~/work/CCS-Q/CCS-Q/src/ccs/fitting/spline_functions.py:344,</span> in <span class="ni">Twobody.get_expcoeffs</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">321</span> <span class="sd">&quot;&quot;&quot;Calculates coefficients of exponential function.</span>
-<span class="g g-Whitespace">    </span><span class="mi">322</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">323</span><span class="sd"> Args:</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">335</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">336</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">337</span> <span class="c1"># NOTE WE SHOULD NOTE INCLUDE INNERMOST POINT WHICH IS IL-DEFINED!</span>
-<span class="g g-Whitespace">    </span><span class="mi">338</span> <span class="c1"># OLD CODE</span>
-<span class="g g-Whitespace">    </span><span class="mi">339</span> <span class="c1"># aa = self.splcoeffs[0, 0]</span>
-   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">342</span> <span class="c1"># r0 = self.rn[0]</span>
-<span class="g g-Whitespace">    </span><span class="mi">343</span> <span class="c1"># NEW CODE</span>
-<span class="ne">--&gt; </span><span class="mi">344</span> <span class="n">aa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splcoeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">345</span> <span class="n">bb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splcoeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">346</span> <span class="n">cc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splcoeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-
-<span class="ne">IndexError</span>: index 1 is out of bounds for axis 0 with size 1
 </pre></div>
 </div>
 </div>
@@ -474,73 +328,448 @@ DEBUG: Current pair Li-Li has 2 knots and [[0. 0.]] coefficients.
 <h2>Analysis<a class="headerlink" href="#analysis" title="Permalink to this heading"></a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;../DFT_DB.db&quot;</span><span class="p">)</span>
-<span class="n">db_ccs</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;CCS_DB.db&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>struct=db.connect(&quot;../DFT_DB.db&quot;)
+db_ccs=db.connect(&quot;CCS_DB.db&quot;)
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;CCS_params.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">CCS_params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+with open(&#39;CCS_params.json&#39;, &#39;r&#39;) as f:
+    CCS_params = json.load(f)
 
-<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">select</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">struct</span><span class="p">)):</span>  
-    <span class="n">structure</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">toatoms</span><span class="p">()</span>
-    <span class="n">structure</span><span class="o">.</span><span class="n">calc</span><span class="o">=</span><span class="n">CCS</span><span class="p">(</span><span class="n">CCS_params</span><span class="o">=</span><span class="n">CCS_params</span><span class="p">)</span>
-    <span class="n">structure</span><span class="o">.</span><span class="n">get_potential_energy</span><span class="p">()</span>
-    <span class="n">structure</span><span class="o">.</span><span class="n">get_forces</span><span class="p">()</span>
-    <span class="n">db_ccs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span><span class="n">key</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">key</span><span class="p">,</span><span class="n">CCS</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+for row in tqdm(struct.select(), total=len(struct)):  
+    structure=row.toatoms()
+    structure.calc=CCS(CCS_params=CCS_params)
+    structure.get_potential_energy()
+    structure.get_forces()
+    db_ccs.write(structure,key=row.key,CCS=True)
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|█| 999/999 [00:1
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/999 [00:00&lt;?, ?it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  1%|          | 7/999 [00:00&lt;00:14, 68.86it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  2%|▏         | 18/999 [00:00&lt;00:10, 89.22it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  3%|▎         | 29/999 [00:00&lt;00:09, 97.78it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  4%|▍         | 40/999 [00:00&lt;00:09, 99.86it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 51/999 [00:00&lt;00:09, 102.52it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  6%|▌         | 62/999 [00:00&lt;00:10, 90.78it/s] 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  7%|▋         | 72/999 [00:00&lt;00:09, 93.19it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  8%|▊         | 83/999 [00:00&lt;00:09, 97.64it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 10%|▉         | 95/999 [00:00&lt;00:08, 101.94it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 11%|█         | 107/999 [00:01&lt;00:08, 104.81it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 12%|█▏        | 118/999 [00:01&lt;00:08, 97.92it/s] 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 13%|█▎        | 129/999 [00:01&lt;00:08, 100.91it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 14%|█▍        | 140/999 [00:01&lt;00:08, 102.82it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 15%|█▌        | 151/999 [00:01&lt;00:08, 104.64it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 16%|█▌        | 162/999 [00:01&lt;00:08, 104.09it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 17%|█▋        | 173/999 [00:01&lt;00:07, 105.55it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 19%|█▊        | 185/999 [00:01&lt;00:07, 107.13it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 20%|█▉        | 197/999 [00:01&lt;00:07, 108.19it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 21%|██        | 209/999 [00:02&lt;00:07, 108.85it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 22%|██▏       | 221/999 [00:02&lt;00:07, 109.37it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 23%|██▎       | 232/999 [00:02&lt;00:07, 108.83it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 24%|██▍       | 243/999 [00:02&lt;00:06, 108.90it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 25%|██▌       | 254/999 [00:02&lt;00:06, 108.84it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 27%|██▋       | 265/999 [00:02&lt;00:06, 108.28it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 28%|██▊       | 277/999 [00:02&lt;00:06, 108.96it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 29%|██▉       | 288/999 [00:02&lt;00:06, 109.20it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 30%|██▉       | 299/999 [00:02&lt;00:06, 108.82it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 31%|███       | 310/999 [00:02&lt;00:06, 108.88it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 32%|███▏      | 321/999 [00:03&lt;00:06, 108.32it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 33%|███▎      | 332/999 [00:03&lt;00:06, 108.23it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 34%|███▍      | 343/999 [00:03&lt;00:06, 108.48it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 35%|███▌      | 354/999 [00:03&lt;00:05, 108.65it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 37%|███▋      | 365/999 [00:03&lt;00:05, 108.54it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 38%|███▊      | 377/999 [00:03&lt;00:05, 108.99it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 39%|███▉      | 388/999 [00:03&lt;00:05, 107.99it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 40%|███▉      | 399/999 [00:03&lt;00:05, 107.99it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 41%|████      | 410/999 [00:03&lt;00:05, 107.56it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 42%|████▏     | 421/999 [00:04&lt;00:05, 107.45it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 43%|████▎     | 432/999 [00:04&lt;00:05, 106.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 44%|████▍     | 443/999 [00:04&lt;00:05, 107.24it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 45%|████▌     | 454/999 [00:04&lt;00:05, 107.24it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 47%|████▋     | 465/999 [00:04&lt;00:04, 107.27it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 48%|████▊     | 476/999 [00:04&lt;00:04, 107.32it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 49%|████▊     | 487/999 [00:04&lt;00:04, 106.77it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 50%|████▉     | 498/999 [00:04&lt;00:04, 101.03it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 51%|█████     | 509/999 [00:04&lt;00:05, 92.92it/s] 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 52%|█████▏    | 519/999 [00:05&lt;00:05, 88.33it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 53%|█████▎    | 528/999 [00:05&lt;00:05, 85.45it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 54%|█████▍    | 537/999 [00:05&lt;00:05, 82.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 55%|█████▍    | 546/999 [00:05&lt;00:05, 81.55it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 56%|█████▌    | 555/999 [00:05&lt;00:05, 80.68it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 56%|█████▋    | 564/999 [00:05&lt;00:05, 79.60it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 57%|█████▋    | 572/999 [00:05&lt;00:05, 79.09it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 58%|█████▊    | 580/999 [00:05&lt;00:05, 76.35it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 59%|█████▉    | 588/999 [00:05&lt;00:05, 76.62it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 60%|█████▉    | 596/999 [00:06&lt;00:05, 76.70it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 60%|██████    | 604/999 [00:06&lt;00:05, 76.68it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 61%|██████▏   | 612/999 [00:06&lt;00:05, 76.59it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 62%|██████▏   | 620/999 [00:06&lt;00:04, 76.39it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 63%|██████▎   | 628/999 [00:06&lt;00:04, 76.36it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 64%|██████▎   | 636/999 [00:06&lt;00:04, 76.47it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 64%|██████▍   | 644/999 [00:06&lt;00:04, 75.94it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 65%|██████▌   | 652/999 [00:06&lt;00:04, 75.86it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 66%|██████▌   | 660/999 [00:06&lt;00:04, 75.88it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 67%|██████▋   | 668/999 [00:06&lt;00:04, 76.26it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 68%|██████▊   | 676/999 [00:07&lt;00:04, 76.08it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 68%|██████▊   | 684/999 [00:07&lt;00:04, 76.96it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 69%|██████▉   | 694/999 [00:07&lt;00:03, 81.18it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 71%|███████   | 705/999 [00:07&lt;00:03, 87.86it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 72%|███████▏  | 716/999 [00:07&lt;00:03, 92.27it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 73%|███████▎  | 727/999 [00:07&lt;00:02, 95.82it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 74%|███████▍  | 738/999 [00:07&lt;00:02, 98.41it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 75%|███████▍  | 749/999 [00:07&lt;00:02, 100.77it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 76%|███████▌  | 760/999 [00:07&lt;00:02, 102.71it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 77%|███████▋  | 771/999 [00:08&lt;00:02, 103.28it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 78%|███████▊  | 782/999 [00:08&lt;00:02, 103.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 79%|███████▉  | 793/999 [00:08&lt;00:01, 104.18it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 80%|████████  | 804/999 [00:08&lt;00:01, 104.28it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 82%|████████▏ | 815/999 [00:08&lt;00:01, 104.61it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 83%|████████▎ | 826/999 [00:08&lt;00:01, 105.66it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 84%|████████▍ | 837/999 [00:08&lt;00:01, 105.70it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 85%|████████▍ | 848/999 [00:08&lt;00:01, 105.58it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 86%|████████▌ | 859/999 [00:08&lt;00:01, 104.77it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 87%|████████▋ | 870/999 [00:08&lt;00:01, 102.77it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 88%|████████▊ | 881/999 [00:09&lt;00:01, 95.12it/s] 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 89%|████████▉ | 891/999 [00:09&lt;00:01, 88.76it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 90%|█████████ | 901/999 [00:09&lt;00:01, 83.39it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 91%|█████████ | 910/999 [00:09&lt;00:01, 80.53it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 92%|█████████▏| 919/999 [00:09&lt;00:01, 78.42it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 93%|█████████▎| 927/999 [00:09&lt;00:00, 75.67it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 94%|█████████▎| 935/999 [00:09&lt;00:00, 73.74it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 94%|█████████▍| 943/999 [00:09&lt;00:00, 72.71it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 95%|█████████▌| 951/999 [00:10&lt;00:00, 71.98it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 96%|█████████▌| 959/999 [00:10&lt;00:00, 72.24it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 97%|█████████▋| 967/999 [00:10&lt;00:00, 72.68it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 98%|█████████▊| 975/999 [00:10&lt;00:00, 72.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 98%|█████████▊| 983/999 [00:10&lt;00:00, 73.09it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 99%|█████████▉| 991/999 [00:10&lt;00:00, 73.16it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 999/999 [00:10&lt;00:00, 73.48it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 999/999 [00:10&lt;00:00, 93.08it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Read Data</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#Read Data
 
-<span class="n">dbname_DFT</span><span class="o">=</span><span class="s1">&#39;../DFT_DB.db&#39;</span>
-<span class="n">dbname_CCS</span><span class="o">=</span><span class="s1">&#39;CCS_DB.db&#39;</span>
-<span class="n">db_ccs</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname_CCS</span><span class="p">)</span>
-<span class="n">db_dft</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname_DFT</span><span class="p">)</span>
-<span class="n">epred</span><span class="o">=</span><span class="p">[];</span><span class="n">edft</span><span class="o">=</span><span class="p">[];</span> <span class="n">eccs</span><span class="o">=</span><span class="p">[];</span>
-<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">db_dft</span><span class="o">.</span><span class="n">select</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">db_dft</span><span class="p">)):</span>
-    <span class="n">structure</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">toatoms</span><span class="p">()</span>
-    <span class="n">natoms</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">get_atomic_numbers</span><span class="p">())</span>
-    <span class="nb">id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
-    <span class="n">eccs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db_ccs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key=&#39;</span><span class="o">+</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">energy</span><span class="o">/</span><span class="n">natoms</span><span class="p">)</span>
-    <span class="n">edft</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db_dft</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key=&#39;</span><span class="o">+</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">energy</span><span class="o">/</span><span class="n">natoms</span><span class="p">)</span> 
+dbname_DFT=&#39;../DFT_DB.db&#39;
+dbname_CCS=&#39;CCS_DB.db&#39;
+db_ccs=db.connect(dbname_CCS)
+db_dft=db.connect(dbname_DFT)
+epred=[];edft=[]; eccs=[];
+for row in tqdm(db_dft.select(), total=len(db_dft)):
+    structure=row.toatoms()
+    natoms=len(structure.get_atomic_numbers())
+    id=str(row.key)
+    eccs.append(db_ccs.get(&#39;key=&#39;+id).energy/natoms)
+    edft.append(db_dft.get(&#39;key=&#39;+id).energy/natoms) 
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|█| 999/999 [00:0
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/999 [00:00&lt;?, ?it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  4%|▍         | 41/999 [00:00&lt;00:02, 401.44it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  8%|▊         | 84/999 [00:00&lt;00:02, 416.11it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 13%|█▎        | 128/999 [00:00&lt;00:02, 423.43it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 17%|█▋        | 172/999 [00:00&lt;00:01, 426.19it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 22%|██▏       | 215/999 [00:00&lt;00:01, 427.43it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 26%|██▌       | 259/999 [00:00&lt;00:01, 429.70it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 30%|███       | 303/999 [00:00&lt;00:01, 431.24it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 35%|███▍      | 347/999 [00:00&lt;00:01, 433.10it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 39%|███▉      | 391/999 [00:00&lt;00:01, 434.28it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 44%|████▎     | 435/999 [00:01&lt;00:01, 435.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 48%|████▊     | 479/999 [00:01&lt;00:01, 436.73it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 52%|█████▏    | 523/999 [00:01&lt;00:01, 437.40it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 57%|█████▋    | 567/999 [00:01&lt;00:00, 437.46it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 61%|██████▏   | 612/999 [00:01&lt;00:00, 438.16it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 66%|██████▌   | 656/999 [00:01&lt;00:00, 438.42it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 70%|███████   | 700/999 [00:01&lt;00:00, 437.74it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 74%|███████▍  | 744/999 [00:01&lt;00:00, 437.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 79%|███████▉  | 788/999 [00:01&lt;00:00, 438.47it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 83%|████████▎ | 832/999 [00:01&lt;00:00, 436.73it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 88%|████████▊ | 877/999 [00:02&lt;00:00, 437.82it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 92%|█████████▏| 922/999 [00:02&lt;00:00, 439.05it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 97%|█████████▋| 967/999 [00:02&lt;00:00, 439.59it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 999/999 [00:02&lt;00:00, 434.84it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#plot Energies</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#plot Energies
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+import matplotlib.pyplot as plt
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">edft</span><span class="p">,</span> <span class="n">eccs</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+plt.figure(figsize = (10,10))
+plt.scatter(edft, eccs, s=50, alpha=0.8, color=&#39;r&#39;)
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">edft</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">edft</span><span class="p">)],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">edft</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">edft</span><span class="p">)],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DFTB+CCS&quot;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">30</span> <span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;E$_</span><span class="si">{DFT}</span><span class="s1">$/atom (eV)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;E$_{DFTB+CCS}$&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">edft</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">edft</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">edft</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">edft</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;DFTvsDFTB+CCS.png&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+plt.plot([np.min(edft),np.max(edft)], [np.min(edft),np.max(edft)], &#39;k-&#39;, lw=2.5)
+plt.legend(labels=[&quot;DFTB+CCS&quot;], fontsize=30 )
+plt.xlabel(&#39;E$_{DFT}$/atom (eV)&#39;,fontsize=30)
+plt.ylabel(&#39;E$_{DFTB+CCS}$&#39;,fontsize=30)
+plt.xlim(np.min(edft),np.max(edft))
+plt.ylim(np.min(edft),np.max(edft))
+plt.savefig(&#39;DFTvsDFTB+CCS.png&#39;)
+plt.show()
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/dab2c9ac2d8df2178efab2e34722d6ce2be14a2960bf6340c558e78c9b8faf4d.png" src="_images/dab2c9ac2d8df2178efab2e34722d6ce2be14a2960bf6340c558e78c9b8faf4d.png" />
+<img alt="_images/9443ed67254bfc1075c5c9b1383031acce65a900ee6f2c96674cfa5d23e70633.png" src="_images/9443ed67254bfc1075c5c9b1383031acce65a900ee6f2c96674cfa5d23e70633.png" />
 </div>
 </div>
 </section>
