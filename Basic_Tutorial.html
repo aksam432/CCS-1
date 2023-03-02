@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic Tutorial &mdash; CCS_fit  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="prev" title="CCS_fit - Fitting using Curvature Constrained Splines" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CCS_fit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generate-the-ccs-fit-input-file-structures-json">Generate the CCS_fit input file; structures.json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fit-training-data-to-curvature-constrained-splines">Fit training data to Curvature Constrained Splines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-your-potential">Validate your potential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cleaning-up">Cleaning up</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CCS_fit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Basic Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Basic_Tutorial.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="basic-tutorial">
+<h1>Basic Tutorial<a class="headerlink" href="#basic-tutorial" title="Permalink to this heading"></a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load in the relevant packages</span>
+
+<span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span><span class="p">,</span><span class="n">write</span>
+<span class="kn">from</span> <span class="nn">ase.build</span> <span class="kn">import</span> <span class="n">bulk</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">ase.db</span> <span class="k">as</span> <span class="nn">db</span>
+<span class="kn">from</span> <span class="nn">ase.visualize</span> <span class="kn">import</span> <span class="n">view</span>
+<span class="kn">from</span> <span class="nn">ase.calculators.lj</span> <span class="kn">import</span> <span class="n">LennardJones</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">Fit_on_forces</span><span class="o">=</span><span class="kc">True</span>  <span class="c1">#Enable/disable option for fitting CCS potential to atomic forces. </span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="generate-the-ccs-fit-input-file-structures-json">
+<h2>Generate the CCS_fit input file; structures.json<a class="headerlink" href="#generate-the-ccs-fit-input-file-structures-json" title="Permalink to this heading"></a></h2>
+<p>The next commands fetch the training set data from the ASE database containing the LJ structures and the corresponding energies. The reference data is called <code class="docutils literal notranslate"><span class="pre">LJ.db</span></code> since the reference energies and forces are obtained from a Lennard Jones potential.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ccs_fit.scripts.ccs_fetch</span> <span class="kn">import</span> <span class="n">ccs_fetch</span>
+
+<span class="n">ccs_fetch</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;CCS&quot;</span><span class="p">,</span><span class="n">DFT_DB</span><span class="o">=</span><span class="s2">&quot;LJ.db&quot;</span><span class="p">,</span><span class="n">include_forces</span><span class="o">=</span><span class="n">Fit_on_forces</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Fetching data:   0%|          | 0/40 [00:00&lt;?, ?it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Fetching data:  20%|██        | 8/40 [00:00&lt;00:00, 43.20it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Fetching data:  40%|████      | 16/40 [00:00&lt;00:00, 58.67it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Fetching data:  57%|█████▊    | 23/40 [00:00&lt;00:00, 49.25it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Fetching data:  80%|████████  | 32/40 [00:00&lt;00:00, 46.49it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Fetching data: 100%|██████████| 40/40 [00:00&lt;00:00, 54.48it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Fetching data: 100%|██████████| 40/40 [00:00&lt;00:00, 51.89it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="fit-training-data-to-curvature-constrained-splines">
+<h2>Fit training data to Curvature Constrained Splines<a class="headerlink" href="#fit-training-data-to-curvature-constrained-splines" title="Permalink to this heading"></a></h2>
+<p>Finally, the splines are fitted to the target defined in the structures.json input file. The splines can be restricted to be fully repulsive (“rep”), or have a turning point/switch (“sw”), which is defined by the “Swtype” key. A more comprehensive guide on the fitting options can be found in Advanced_Tutorials/Search_Mode.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">### Generate input.json file</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="nb">input</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;General&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;interface&quot;</span><span class="p">:</span> <span class="s2">&quot;CCS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;merging&quot;</span>  <span class="p">:</span> <span class="s2">&quot;True&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Twobody&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;Ne-Ne&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;Rcut&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+                        <span class="s2">&quot;Resolution&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+                        <span class="s2">&quot;Swtype&quot;</span><span class="p">:</span> <span class="s2">&quot;sw&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;const_type&quot;</span> <span class="p">:</span> <span class="s2">&quot;Mono&quot;</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">#SAVE TO FILE</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;CCS_input.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#RUN FIT</span>
+<span class="kn">from</span> <span class="nn">ccs_fit</span> <span class="kn">import</span> <span class="n">ccs_fit</span>
+
+<span class="n">ccs_fit</span><span class="p">(</span><span class="s2">&quot;CCS_input.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Generating one-body information from training-set.
+        Added elements:  [&#39;Ne&#39;]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Applying monotonous constraints for pair:  Ne-Ne
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Merging intervals for pair Ne-Ne; number of intervals reduced from 412 to 411. 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   0%|          | 0/411 [00:00&lt;?, ?it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   0%|          | 1/411 [00:00&lt;00:55,  7.45it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   0%|          | 2/411 [00:00&lt;00:59,  6.89it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   1%|          | 3/411 [00:00&lt;00:59,  6.89it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   1%|          | 4/411 [00:00&lt;00:55,  7.39it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   1%|          | 5/411 [00:00&lt;00:55,  7.31it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   1%|▏         | 6/411 [00:00&lt;00:53,  7.58it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   2%|▏         | 7/411 [00:00&lt;00:51,  7.91it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   2%|▏         | 8/411 [00:01&lt;00:49,  8.06it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   2%|▏         | 9/411 [00:01&lt;00:50,  7.94it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   2%|▏         | 10/411 [00:01&lt;00:50,  7.92it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   3%|▎         | 11/411 [00:01&lt;00:50,  7.85it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   3%|▎         | 12/411 [00:01&lt;00:48,  8.18it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   3%|▎         | 14/411 [00:01&lt;00:39, 10.14it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   4%|▎         | 15/411 [00:01&lt;00:39,  9.96it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   4%|▍         | 16/411 [00:01&lt;00:41,  9.61it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   4%|▍         | 18/411 [00:02&lt;00:36, 10.70it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   5%|▍         | 20/411 [00:02&lt;00:34, 11.22it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   5%|▌         | 22/411 [00:02&lt;00:31, 12.30it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   6%|▌         | 24/411 [00:02&lt;00:30, 12.58it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   6%|▋         | 26/411 [00:02&lt;00:30, 12.60it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   7%|▋         | 28/411 [00:02&lt;00:34, 10.98it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   7%|▋         | 30/411 [00:03&lt;00:36, 10.51it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   8%|▊         | 32/411 [00:03&lt;00:37, 10.23it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   8%|▊         | 34/411 [00:03&lt;00:36, 10.34it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   9%|▉         | 36/411 [00:03&lt;00:37,  9.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:   9%|▉         | 38/411 [00:03&lt;00:37,  9.93it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  10%|▉         | 40/411 [00:04&lt;00:36, 10.10it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  10%|█         | 42/411 [00:04&lt;00:36, 10.11it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  11%|█         | 44/411 [00:04&lt;00:38,  9.60it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  11%|█         | 45/411 [00:04&lt;00:39,  9.27it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  11%|█         | 46/411 [00:04&lt;00:40,  8.93it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  11%|█▏        | 47/411 [00:04&lt;00:40,  8.91it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  12%|█▏        | 48/411 [00:05&lt;00:40,  9.05it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  12%|█▏        | 49/411 [00:05&lt;00:41,  8.66it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  12%|█▏        | 50/411 [00:05&lt;00:41,  8.73it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  12%|█▏        | 51/411 [00:05&lt;00:41,  8.60it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  13%|█▎        | 52/411 [00:05&lt;00:41,  8.56it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  13%|█▎        | 53/411 [00:05&lt;00:41,  8.66it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  13%|█▎        | 55/411 [00:05&lt;00:36,  9.81it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  14%|█▍        | 57/411 [00:05&lt;00:35,  9.87it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  14%|█▍        | 58/411 [00:06&lt;00:36,  9.56it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  14%|█▍        | 59/411 [00:06&lt;00:37,  9.26it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  15%|█▍        | 60/411 [00:06&lt;00:39,  8.96it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  15%|█▍        | 61/411 [00:06&lt;00:41,  8.52it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  15%|█▌        | 62/411 [00:06&lt;00:40,  8.56it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  15%|█▌        | 63/411 [00:06&lt;00:40,  8.59it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  16%|█▌        | 64/411 [00:06&lt;00:39,  8.78it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  16%|█▌        | 65/411 [00:06&lt;00:39,  8.75it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  16%|█▌        | 66/411 [00:07&lt;00:39,  8.78it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  16%|█▋        | 67/411 [00:07&lt;00:39,  8.62it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  17%|█▋        | 69/411 [00:07&lt;00:37,  9.21it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  17%|█▋        | 70/411 [00:07&lt;00:38,  8.96it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  17%|█▋        | 71/411 [00:07&lt;00:38,  8.88it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  18%|█▊        | 72/411 [00:07&lt;00:40,  8.45it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  18%|█▊        | 73/411 [00:07&lt;00:40,  8.33it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  18%|█▊        | 74/411 [00:07&lt;00:40,  8.35it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  18%|█▊        | 75/411 [00:08&lt;00:41,  8.17it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  18%|█▊        | 76/411 [00:08&lt;00:40,  8.21it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  19%|█▊        | 77/411 [00:08&lt;00:41,  8.11it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  19%|█▉        | 78/411 [00:08&lt;00:40,  8.20it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  19%|█▉        | 79/411 [00:08&lt;00:38,  8.53it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  20%|█▉        | 81/411 [00:08&lt;00:33,  9.81it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  20%|█▉        | 82/411 [00:08&lt;00:33,  9.73it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  20%|██        | 84/411 [00:09&lt;00:31, 10.52it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  21%|██        | 86/411 [00:09&lt;00:32, 10.15it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  21%|██▏       | 88/411 [00:09&lt;00:30, 10.43it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  22%|██▏       | 90/411 [00:09&lt;00:30, 10.56it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  22%|██▏       | 92/411 [00:09&lt;00:32,  9.95it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  23%|██▎       | 93/411 [00:09&lt;00:32,  9.71it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  23%|██▎       | 94/411 [00:10&lt;00:33,  9.58it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  23%|██▎       | 95/411 [00:10&lt;00:33,  9.57it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  24%|██▎       | 97/411 [00:10&lt;00:28, 10.83it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  24%|██▍       | 99/411 [00:10&lt;00:27, 11.48it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  25%|██▍       | 101/411 [00:10&lt;00:28, 10.99it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  25%|██▌       | 103/411 [00:10&lt;00:28, 10.72it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  26%|██▌       | 105/411 [00:10&lt;00:26, 11.56it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  26%|██▌       | 107/411 [00:11&lt;00:25, 11.97it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  27%|██▋       | 109/411 [00:11&lt;00:23, 12.99it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  27%|██▋       | 111/411 [00:11&lt;00:24, 12.41it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  27%|██▋       | 113/411 [00:11&lt;00:24, 12.02it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  28%|██▊       | 115/411 [00:11&lt;00:23, 12.51it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  28%|██▊       | 117/411 [00:11&lt;00:22, 13.04it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  29%|██▉       | 119/411 [00:12&lt;00:22, 13.18it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Finding optimum switch:  29%|██▉       | 119/411 [00:12&lt;00:29,  9.84it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1">#RUN FIT</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">ccs_fit</span> <span class="kn">import</span> <span class="n">ccs_fit</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">ccs_fit</span><span class="p">(</span><span class="s2">&quot;CCS_input.json&quot;</span><span class="p">)</span>
+
+<span class="nn">File ~/work/CCS-Q/CCS-Q/src/ccs_fit/fitting/main.py:394,</span> in <span class="ni">twp_fit</span><span class="nt">(filename)</span>
+<span class="g g-Whitespace">    </span><span class="mi">382</span> <span class="n">nn</span> <span class="o">=</span> <span class="n">Objective</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">383</span>     <span class="n">atom_pairs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">384</span>     <span class="n">atom_onebodies</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">390</span>     <span class="n">force_ewald</span><span class="o">=</span><span class="n">ewald_forces</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">391</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">393</span> <span class="c1"># Solve QP problem</span>
+<span class="ne">--&gt; </span><span class="mi">394</span> <span class="n">predicted_energies</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="n">xx_unfolded</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">solution</span><span class="p">()</span>
+
+<span class="nn">File ~/work/CCS-Q/CCS-Q/src/ccs_fit/fitting/objective.py:210,</span> in <span class="ni">Objective.solution</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">208</span>     <span class="n">hh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">gg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="g g-Whitespace">    </span><span class="mi">209</span>     <span class="n">bb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">aa</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="ne">--&gt; </span><span class="mi">210</span>     <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">qq</span><span class="p">,</span> <span class="n">matrix</span><span class="p">(</span><span class="n">gg</span><span class="p">),</span> <span class="n">matrix</span><span class="p">(</span><span class="n">hh</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">211</span>                       <span class="n">matrix</span><span class="p">(</span><span class="n">aa</span><span class="p">),</span> <span class="n">matrix</span><span class="p">(</span><span class="n">bb</span><span class="p">))</span>
+<span class="g g-Whitespace">    </span><span class="mi">212</span>     <span class="n">obj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_obj</span><span class="p">(</span><span class="n">sol</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])))</span>
+<span class="g g-Whitespace">    </span><span class="mi">214</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="nn">File ~/work/CCS-Q/CCS-Q/src/ccs_fit/fitting/objective.py:331,</span> in <span class="ni">Objective.solver</span><span class="nt">(pp, qq, gg, hh, aa, bb, maxiter, tol)</span>
+<span class="g g-Whitespace">    </span><span class="mi">329</span>     <span class="n">sol</span> <span class="o">=</span> <span class="n">solvers</span><span class="o">.</span><span class="n">qp</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">qq</span><span class="p">,</span> <span class="n">gg</span><span class="p">,</span> <span class="n">hh</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">330</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">331</span>     <span class="n">sol</span> <span class="o">=</span> <span class="n">solvers</span><span class="o">.</span><span class="n">qp</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">qq</span><span class="p">,</span> <span class="n">gg</span><span class="p">,</span> <span class="n">hh</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">333</span> <span class="k">return</span> <span class="n">sol</span>
+
+<span class="nn">File ~/.cache/pypoetry/virtualenvs/ccs-fit-4ChnZveR-py3.9/lib/python3.9/site-packages/cvxopt/coneprog.py:4485,</span> in <span class="ni">qp</span><span class="nt">(P, q, G, h, A, b, solver, kktsolver, initvals, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4475</span>         <span class="n">pinfres</span><span class="p">,</span> <span class="n">dinfres</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">4477</span>     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">4478</span>         <span class="s1">&#39;primal objective&#39;</span><span class="p">:</span> <span class="n">pcost</span><span class="p">,</span> <span class="s1">&#39;dual objective&#39;</span><span class="p">:</span> <span class="n">dcost</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">4479</span>         <span class="s1">&#39;gap&#39;</span><span class="p">:</span> <span class="n">gap</span><span class="p">,</span> <span class="s1">&#39;relative gap&#39;</span><span class="p">:</span> <span class="n">relgap</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4482</span>         <span class="s1">&#39;residual as primal infeasibility certificate&#39;</span><span class="p">:</span> <span class="n">pinfres</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">4483</span>         <span class="s1">&#39;residual as dual infeasibility certificate&#39;</span><span class="p">:</span> <span class="n">dinfres</span><span class="p">}</span>
+<span class="ne">-&gt; </span><span class="mi">4485</span> <span class="k">return</span> <span class="n">coneqp</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span>  <span class="n">b</span><span class="p">,</span> <span class="n">initvals</span><span class="p">,</span> <span class="n">kktsolver</span> <span class="o">=</span> <span class="n">kktsolver</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+
+<span class="nn">File ~/.cache/pypoetry/virtualenvs/ccs-fit-4ChnZveR-py3.9/lib/python3.9/site-packages/cvxopt/coneprog.py:2256,</span> in <span class="ni">coneqp</span><span class="nt">(P, q, G, h, dims, A, b, initvals, kktsolver, xnewcopy, xdot, xaxpy, xscal, ynewcopy, ydot, yaxpy, yscal, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2244</span> <span class="n">misc</span><span class="o">.</span><span class="n">ssqr</span><span class="p">(</span><span class="n">lmbdasq</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2247</span> <span class="c1"># f3(x, y, z) solves</span>
+<span class="g g-Whitespace">   </span><span class="mi">2248</span> <span class="c1">#</span>
+<span class="g g-Whitespace">   </span><span class="mi">2249</span> <span class="c1">#    [ P   A&#39;  G&#39;    ] [ ux        ]   [ bx ]</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2253</span> <span class="c1"># On entry, x, y, z containg bx, by, bz.</span>
+<span class="g g-Whitespace">   </span><span class="mi">2254</span> <span class="c1"># On exit, they contain ux, uy, uz.</span>
+<span class="ne">-&gt; </span><span class="mi">2256</span> <span class="k">try</span><span class="p">:</span> <span class="n">f3</span> <span class="o">=</span> <span class="n">kktsolver</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2257</span> <span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">2258</span>     <span class="k">if</span> <span class="n">iters</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+<span class="nn">File ~/.cache/pypoetry/virtualenvs/ccs-fit-4ChnZveR-py3.9/lib/python3.9/site-packages/cvxopt/coneprog.py:1981,</span> in <span class="ni">coneqp.&lt;locals&gt;.kktsolver</span><span class="nt">(W)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1980</span> <span class="k">def</span> <span class="nf">kktsolver</span><span class="p">(</span><span class="n">W</span><span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1981</span>     <span class="k">return</span> <span class="n">factor</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+
+<span class="nn">File ~/.cache/pypoetry/virtualenvs/ccs-fit-4ChnZveR-py3.9/lib/python3.9/site-packages/cvxopt/misc.py:1460,</span> in <span class="ni">kkt_chol2.&lt;locals&gt;.factor</span><span class="nt">(W, H, Df)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1457</span>     <span class="n">base</span><span class="o">.</span><span class="n">syrk</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">F</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">],</span> <span class="n">trans</span> <span class="o">=</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">partial</span> <span class="o">=</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1458</span>         <span class="kc">True</span><span class="p">)</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1459</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="n">matrix</span><span class="p">:</span> 
+<span class="ne">-&gt; </span><span class="mi">1460</span>     <span class="n">lapack</span><span class="o">.</span><span class="n">potrf</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">])</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1461</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1462</span>     <span class="n">cholmod</span><span class="o">.</span><span class="n">numeric</span><span class="p">(</span><span class="n">F</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">],</span> <span class="n">F</span><span class="p">[</span><span class="s1">&#39;Sf&#39;</span><span class="p">])</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="validate-your-potential">
+<h2>Validate your potential<a class="headerlink" href="#validate-your-potential" title="Permalink to this heading"></a></h2>
+<p>Make sure your potential (at least) reproduce the data points in your training-set. Performing further tests on strucutres not included in the training set is recomended but not included in the tutorial.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ccs_fit.scripts.ccs_validate</span> <span class="kn">import</span> <span class="n">ccs_validate</span>
+<span class="n">ccs_validate</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;CCS&quot;</span><span class="p">,</span><span class="n">CCS_params</span><span class="o">=</span><span class="s2">&quot;CCS_params.json&quot;</span><span class="p">,</span><span class="n">DFT_DB</span><span class="o">=</span><span class="s2">&quot;LJ.db&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/40 [00:00&lt;?, ?it/s]/home/thism292/anaconda3/envs/CCS_fit/lib/python3.9/site-packages/ase/utils/__init__.py:62: FutureWarning: Please use atoms.cell.rank instead
+  warnings.warn(warning)
+100%|██████████| 40/40 [00:01&lt;00:00, 29.38it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;CCS_params.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">CCS_params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;structures.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">training_set</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">CCS_params</span><span class="p">[</span><span class="s2">&quot;Two_body&quot;</span><span class="p">][</span><span class="s2">&quot;Ne-Ne&quot;</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">])</span>
+<span class="n">e</span><span class="o">=</span><span class="n">CCS_params</span><span class="p">[</span><span class="s2">&quot;Two_body&quot;</span><span class="p">][</span><span class="s2">&quot;Ne-Ne&quot;</span><span class="p">][</span><span class="s2">&quot;spl_a&quot;</span><span class="p">]</span>
+<span class="n">e_LJ</span><span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="n">r</span><span class="p">)</span> <span class="o">**</span> <span class="mi">12</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">r</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Distance (Å)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Potential (eV)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">e_LJ</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ref. Lennard-Jones potential&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Fitted potential&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">err</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;CCS_validate.dat&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Reference energy (eV)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Validation energy (eV)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">err</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">err</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])],[</span><span class="nb">min</span><span class="p">(</span><span class="n">err</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">err</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])],</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span>  <span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">err</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">err</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Reference energy (eV)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Error in fit (eV)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">err</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">err</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">err_F</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;CCS_error_forces.out&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Reference force (eV/Å)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Fitted force (eV/Å)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">err_F</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">err_F</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])],[</span><span class="nb">min</span><span class="p">(</span><span class="n">err_F</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">err_F</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])],</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">err_F</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">err_F</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span> <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="n">d</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">training_set</span><span class="p">[</span><span class="s2">&quot;energies&quot;</span><span class="p">]:</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">training_set</span><span class="p">[</span><span class="s2">&quot;energies&quot;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s2">&quot;Ne-Ne&quot;</span><span class="p">])</span>
+    
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/971430295eb7eb283c429fb99eace35825ccc993413d1ffd3017fef659a19f13.png" src="_images/971430295eb7eb283c429fb99eace35825ccc993413d1ffd3017fef659a19f13.png" />
+<img alt="_images/98a10e14ede4412fa478de0e30ee956128a10f06f4f5c808967da50e8c709e9f.png" src="_images/98a10e14ede4412fa478de0e30ee956128a10f06f4f5c808967da50e8c709e9f.png" />
+<img alt="_images/ef59bba4ac83a2dba0e3b188ad5f179910109472b29149286b7b97fd13090a57.png" src="_images/ef59bba4ac83a2dba0e3b188ad5f179910109472b29149286b7b97fd13090a57.png" />
+<img alt="_images/23603dfd03fa702da9eed603ebfe10902bbffdcd8d8b163ffe18f832909cf98b.png" src="_images/23603dfd03fa702da9eed603ebfe10902bbffdcd8d8b163ffe18f832909cf98b.png" />
+<img alt="_images/808c6ce0f0b739d0593e810508f145d59a7ddedaf9465b89adbea2bd0161f208.png" src="_images/808c6ce0f0b739d0593e810508f145d59a7ddedaf9465b89adbea2bd0161f208.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ccs_fit.scripts.ccs_export_FF</span> <span class="kn">import</span> <span class="n">write_FF</span>
+
+<span class="n">write_FF</span><span class="p">(</span><span class="s2">&quot;CCS_params.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cleaning-up">
+<h2>Cleaning up<a class="headerlink" href="#cleaning-up" title="Permalink to this heading"></a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">def</span> <span class="nf">rm</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="nb">list</span><span class="o">=</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;CALCULATED_DATA/*&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="n">rm</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<span class="nb">list</span><span class="o">=</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;CCS_*&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="n">rm</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<span class="n">rm</span><span class="p">(</span><span class="s2">&quot;structures.json&quot;</span><span class="p">)</span>
+<span class="n">rm</span><span class="p">(</span><span class="s2">&quot;file_list&quot;</span><span class="p">)</span>
+<span class="n">rm</span><span class="p">(</span><span class="s2">&quot;ccs.spl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="CCS_fit - Fitting using Curvature Constrained Splines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jolla Kullgren.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

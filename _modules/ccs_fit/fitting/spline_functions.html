@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ccs_fit.fitting.spline_functions &mdash; CCS  documentation</title>
+  <title>ccs_fit.fitting.spline_functions &mdash; CCS_fit  documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
@@ -28,7 +28,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> CCS
+            <a href="../../../index.html" class="icon icon-home"> CCS_fit
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -39,7 +39,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../gen_ccs.html">CSS repulsive potential generation (2-body)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Basic_Tutorial.html">Basic Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">CCS</a>
+          <a href="../../../index.html">CCS_fit</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -102,10 +102,14 @@
         <span class="n">dismat</span><span class="p">,</span>
         <span class="n">distmat_forces</span><span class="p">,</span>
         <span class="n">Rcut</span><span class="p">,</span>
+        <span class="n">range_center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">range_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">search_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">Swtype</span><span class="o">=</span><span class="s2">&quot;rep&quot;</span><span class="p">,</span>
         <span class="n">Rmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">Resolution</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
         <span class="n">const_type</span><span class="o">=</span><span class="s2">&quot;mono&quot;</span><span class="p">,</span>
+        <span class="n">search_mode</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs a Twobody object.</span>
@@ -124,6 +128,7 @@
 <span class="sd">                number of knots in the spline interval</span>
 <span class="sd">            Rmin : float</span>
 <span class="sd">                optional, minimum value of the spline interval, default None</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -136,8 +141,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">Rcut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rmin</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rn_full</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rmin</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rn_full</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">range_center</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">range_center</span> <span class="o">=</span> <span class="p">(</span><span class="n">Rmin</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Rcut</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">range_center</span> <span class="o">=</span> <span class="n">range_center</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">range_width</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">range_width</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Rcut</span><span class="o">-</span><span class="n">Rmin</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">range_width</span> <span class="o">=</span> <span class="n">range_width</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">search_points</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Rmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rcut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_points</span> <span class="o">=</span> <span class="n">search_points</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Swtype</span> <span class="o">=</span> <span class="n">Swtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">const_type</span> <span class="o">=</span> <span class="n">const_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_mode</span> <span class="o">=</span> <span class="n">search_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">range_center</span> <span class="o">=</span> <span class="n">range_center</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">range_width</span> <span class="o">=</span> <span class="n">range_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_points</span> <span class="o">=</span> <span class="n">search_points</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dismat</span> <span class="o">=</span> <span class="n">dismat</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Nconfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dismat</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distmat_forces</span> <span class="o">=</span> <span class="n">distmat_forces</span>
@@ -145,7 +166,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_construction</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_v</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_const</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fvv_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_v_forces</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fvv_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_v_forces</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curvatures</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">splcoeffs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expcoeffs</span> <span class="o">=</span> <span class="kc">None</span>
@@ -165,11 +187,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_construction</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vv</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_v</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_const</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fvv_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_v_forces</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;    Merging intervall for pair </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. Number of knots reduced from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_full</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="si">}</span><span class="s2">. &quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fvv_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvv_z</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_v_forces</span><span class="p">([])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_full</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;    Merging intervals for pair </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">; number of intervals reduced from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_full</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="si">}</span><span class="s2">. &quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Merging intervall for pair </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. Number of knots reduced from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_full</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="si">}</span><span class="s2">. &quot;</span><span class="p">)</span></div>
+            <span class="sa">f</span><span class="s2">&quot;Merging intervals for pair </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">; number of intervals reduced from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_full</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="si">}</span><span class="s2">. &quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Twobody.dissolve_interval"><a class="viewcode-back" href="../../../autoapi/ccs_fit/fitting/spline_functions/index.html#ccs_fit.fitting.spline_functions.Twobody.dissolve_interval">[docs]</a>    <span class="k">def</span> <span class="nf">dissolve_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">tmp_curvatures</span> <span class="o">=</span> <span class="p">[]</span>
@@ -205,7 +228,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;mono&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">gg</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;simple&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">a</span></div>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Twobody.switch_const"><a class="viewcode-back" href="../../../autoapi/ccs_fit/fitting/spline_functions/index.html#ccs_fit.fitting.spline_functions.Twobody.switch_const">[docs]</a>    <span class="k">def</span> <span class="nf">switch_const</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_switch</span><span class="p">):</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">const</span><span class="p">)</span>
@@ -216,7 +241,7 @@
 <div class="viewcode-block" id="Twobody.spline_construction"><a class="viewcode-back" href="../../../autoapi/ccs_fit/fitting/spline_functions/index.html#ccs_fit.fitting.spline_functions.Twobody.spline_construction">[docs]</a>    <span class="k">def</span> <span class="nf">spline_construction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function constructs the matrices A, B, C, D.&quot;&quot;&quot;</span>
         <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">rn</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)])</span>
-        <span class="c1">#dx = np.insert(dx, 0, self.res)</span>
+        <span class="c1"># dx = np.insert(dx, 0, self.res)</span>
 
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
@@ -227,8 +252,8 @@
         <span class="n">bb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">aa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="c1">#dd[rows-1, -1] = -1 / dx[rows-1]</span>
-        <span class="c1">#dd[rows-1, -2] = +1 / dx[rows-1]</span>
+        <span class="c1"># dd[rows-1, -1] = -1 / dx[rows-1]</span>
+        <span class="c1"># dd[rows-1, -2] = +1 / dx[rows-1]</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
             <span class="n">ii</span> <span class="o">=</span> <span class="n">rows</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span>
@@ -275,7 +300,7 @@
 
         <span class="k">return</span> <span class="n">vv</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Twobody.get_v_forces"><a class="viewcode-back" href="../../../autoapi/ccs_fit/fitting/spline_functions/index.html#ccs_fit.fitting.spline_functions.Twobody.get_v_forces">[docs]</a>    <span class="k">def</span> <span class="nf">get_v_forces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Twobody.get_v_forces"><a class="viewcode-back" href="../../../autoapi/ccs_fit/fitting/spline_functions/index.html#ccs_fit.fitting.spline_functions.Twobody.get_v_forces">[docs]</a>    <span class="k">def</span> <span class="nf">get_v_forces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs the v matrix.</span>
 
@@ -288,7 +313,6 @@
         <span class="n">vv_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Nconfs_forces</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">))</span>
         <span class="n">vv_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Nconfs_forces</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">))</span>
 
-        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nconfs_forces</span><span class="p">):</span>
             <span class="n">uu_x</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">uu_y</span> <span class="o">=</span> <span class="mi">0</span>
@@ -298,12 +322,15 @@
                 <span class="k">if</span> <span class="n">rr</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">rr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rcut</span><span class="p">:</span>
                     <span class="n">index</span> <span class="o">=</span> <span class="n">bisect</span><span class="o">.</span><span class="n">bisect_left</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rn</span><span class="p">,</span> <span class="n">rr</span><span class="p">)</span>
                     <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span><span class="n">rr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rn</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+                    <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
                     <span class="c1"># INDEX IS SHIFTED IN A,B,C,D</span>
                     <span class="c1"># THIS IS BECAUSE OF THE A,B,C, and D matrix being (N-1)xN</span>
+                    <span class="c1"># NOTE THAT FORCE IS NOT NEGATIVE OF DERIVATIVE SINCE</span>
+                    <span class="c1"># WE ARE &quot;MOVING&quot; FROM END OF INTERVAL INWARDS!!!</span>
                     <span class="n">index</span> <span class="o">=</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span>
-                    <span class="n">bb_ind</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-                    <span class="n">dd_ind</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
-                    <span class="n">c_d</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">delta</span>
+                    <span class="n">bb_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                    <span class="n">dd_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+                    <span class="n">c_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">delta</span>
                     <span class="n">c_force</span> <span class="o">=</span> <span class="n">bb_ind</span> <span class="o">+</span> <span class="n">c_d</span> <span class="o">+</span> <span class="n">dd_ind</span>
                     <span class="n">uu_x</span> <span class="o">=</span> <span class="n">uu_x</span> <span class="o">+</span> <span class="n">c_force</span> <span class="o">*</span> <span class="n">rv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">rr</span>
                     <span class="n">uu_y</span> <span class="o">=</span> <span class="n">uu_y</span> <span class="o">+</span> <span class="n">c_force</span> <span class="o">*</span> <span class="n">rv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">rr</span>
@@ -312,8 +339,7 @@
             <span class="n">vv_x</span><span class="p">[</span><span class="n">config</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">uu_x</span>
             <span class="n">vv_y</span><span class="p">[</span><span class="n">config</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">uu_y</span>
             <span class="n">vv_z</span><span class="p">[</span><span class="n">config</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">uu_z</span>
-
-        <span class="k">return</span> <span class="n">vv_x</span><span class="p">,</span> <span class="n">vv_y</span><span class="p">,</span> <span class="n">vv_z</span></div>
+        <span class="k">return</span> <span class="n">vv_x</span><span class="p">,</span> <span class="n">vv_y</span><span class="p">,</span> <span class="n">vv_z</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Twobody.get_spline_coeffs"><a class="viewcode-back" href="../../../autoapi/ccs_fit/fitting/spline_functions/index.html#ccs_fit.fitting.spline_functions.Twobody.get_spline_coeffs">[docs]</a>    <span class="k">def</span> <span class="nf">get_spline_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">a_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curvatures</span><span class="p">)</span>

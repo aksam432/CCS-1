@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CCS - Curvature Constrained Splines &mdash; CCS  documentation</title>
+  <title>CCS_fit - Fitting using Curvature Constrained Splines &mdash; CCS_fit  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="CSS repulsive potential generation (2-body)" href="gen_ccs.html" /> 
+    <link rel="next" title="Basic Tutorial" href="Basic_Tutorial.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> CCS
+            <a href="#" class="icon icon-home"> CCS_fit
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -41,7 +41,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="gen_ccs.html">CSS repulsive potential generation (2-body)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Basic_Tutorial.html">Basic Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
 </ul>
@@ -52,7 +52,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">CCS</a>
+          <a href="#">CCS_fit</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -60,7 +60,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">CCS - Curvature Constrained Splines</li>
+      <li class="breadcrumb-item active">CCS_fit - Fitting using Curvature Constrained Splines</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -70,23 +70,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ccs-curvature-constrained-splines">
-<h1>CCS - Curvature Constrained Splines<a class="headerlink" href="#ccs-curvature-constrained-splines" title="Permalink to this heading"></a></h1>
-<p><a class="reference external" href="https://github.com/Teoroo-CMC/CCS/releases/latest"><img alt="Latest Release" src="https://img.shields.io/github/v/release/teoroo-cmc/ccs?display_name=tag&amp;color=brightgreen&amp;sort=semver" /></a>
+  <section id="ccs-fit-fitting-using-curvature-constrained-splines">
+<h1>CCS_fit - Fitting using Curvature Constrained Splines<a class="headerlink" href="#ccs-fit-fitting-using-curvature-constrained-splines" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://pypi.org/project/ccs-fit/"><img alt="PyPI" src="https://img.shields.io/pypi/v/ccs_fit?color=g" /></a>
 <a class="reference external" href="https://opensource.org/licenses/LGPL-3.0"><img alt="License" src="https://img.shields.io/github/license/teoroo-cmc/ccs" /></a>
 <a class="reference external" href="https://doi.org/10.1016/j.cpc.2020.107602"><img alt="DOI" src="https://img.shields.io/badge/DOI-10.1016%2Fj.cpc.2020.107602-blue" /></a>
-<a class="reference external" href="https://github.com/Teoroo-CMC/CCS/actions"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/teoroo-cmc/CCS/ci-cd.yml" /></a></p>
+<a class="reference external" href="https://github.com/Teoroo-CMC/CCS/actions"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/teoroo-cmc/CCS/ci-cd.yml" /></a>
+<a class="reference external" href="https://teoroo-cmc.github.io/CCS/"><img alt="Documentation" src="https://img.shields.io/badge/Github%20Pages-CCS_fit-orange" /></a>
+<a class="reference external" href="https://pypi.org/project/ccs-fit/"><img alt="Python version" src="https://img.shields.io/pypi/pyversions/ccs_fit" /></a></p>
 <!--- [![Build Status](https://github.com/tblite/tblite/workflows/CI/badge.svg)](https://github.com/tblite/tblite/actions)
+[![Latest Release](https://img.shields.io/github/v/release/teoroo-cmc/ccs?display_name=tag&color=brightgreen&sort=semver)](https://github.com/Teoroo-CMC/CCS/releases/latest)
 [![Documentation](https://img.shields.io/badge/Github%20Pages-Pages-blue)](https://teoroo-cmc.github.io/CCS/)
 [![codecov](https://codecov.io/gh/tblite/tblite/branch/main/graph/badge.svg?token=JXIE6myqNH)](https://codecov.io/gh/tblite/tblite) 
 [![Coverage](codecov.io/gh/:vcsName/:user/:repo?flag=flag_name&token=a1b2c3d4e5)(https://github.com/Teoroo-CMC/CCS/actions)
 --->
-<p>The <code class="docutils literal notranslate"><span class="pre">CCS</span></code> package is a tool to construct two-body potentials using the idea of curvature constrained splines.</p>
+<p><img alt="" src="logo.png" /></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">CCS_fit</span></code> package is a tool to construct two-body potentials using the idea of curvature constrained splines.</p>
 <section id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h2>
 <section id="package-layout">
 <h3>Package Layout<a class="headerlink" href="#package-layout" title="Permalink to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ccs-x.y.z
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ccs_fit-x.y.z
 ├── CHANGELOG.md
 ├── LICENSE
 ├── MANIFEST.in
@@ -94,19 +98,22 @@
 ├── bin
 │   ├── ccs_build_db
 │   ├── ccs_export_sktable
+|   ├── ccs_export_FF
 │   ├── ccs_fetch
 │   ├── ccs_fit
 │   └── ccs_validate
 ├── docs
 ├── examples
-│   ├── CCS
-│   ├── CCS_with_LAMMPS
-│   ├── DFTB_repulsive_fitting
-│   ├── Preparing_ASE_db_trainingsets
-│   ├── Simple_regressor
-│   ├── Twobody_fit_for_an_O2_molecule
-│   ├── Twobody_fit_for_solid_Ne
-│   └── ppmd_interfacing
+│   └── Basic_Tutorial
+│       └── tutorial.ipynb
+│   └── Advanced_Tutorials
+│       ├── CCS
+│       ├── CCS_with_LAMMPS
+│       ├── DFTB_repulsive_fitting
+│       ├── ppmd_interfacing
+│       ├── Preparing_ASE_db_trainingsets
+│       ├── Search_mode
+│       └── Simple_regressor
 ├── logo.png
 ├── poetry.lock
 ├── pyproject.toml
@@ -121,6 +128,7 @@
 │       ├── regression_tool
 │       └── scripts
 │           ├── ccs_build_db.py
+│           ├── ccs_export_FF.py
 │           ├── ccs_export_sktable.py
 │           ├── ccs_fetch.py
 │           ├── ccs_fit.py
@@ -129,8 +137,12 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ccs_fetch</span></code>           - Executable to construct the traning-set (structures.json) from a pre-existing ASE-database with DFT-data.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ccs_fit</span></code>             - The primary executable file for the ccs package.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ccs_build_db</span></code>        - Routine that builds an ASE-database.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ccs_fetch</span></code>           - Executable to construct the traning-set (structures.json) from a pre-existing ASE-database.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ccs_fit</span></code>             - The primary executable file for the ccs_fit package.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ccs_export_sktable</span></code>  - Export the spline in a dftbplus-compatible layout.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ccs_export_FF</span></code>       - Fit the spline to commonly employed force fields; Buckingham, Morse and Lennard Jones.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ccs_validate</span></code>        - Validation of the energies and forces of the fit compared to the training set.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">main.py</span></code>             - A module to parse input files.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">objective.py</span></code>        - A module which contains the objective function and solver.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">spline_functions.py</span></code> - A module for spline construction/evaluation/output.</p></li>
@@ -139,7 +151,6 @@
 ### Prerequisites
 
 You need to install the following softwares
-
 ```
 pip install numpy
 pip install scipy
@@ -159,7 +170,9 @@ python setup.py install
 </section>
 <section id="recommended-installing-from-pip">
 <h3>(Recommended) installing from pip<a class="headerlink" href="#recommended-installing-from-pip" title="Permalink to this heading"></a></h3>
-<p>pip install ccs_fit</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ccs_fit</span>
+</pre></div>
+</div>
 </section>
 <section id="installing-from-source-using-poetry">
 <h3>Installing from source using poetry<a class="headerlink" href="#installing-from-source-using-poetry" title="Permalink to this heading"></a></h3>
@@ -173,17 +186,17 @@ python setup.py install
 <span class="n">poetry</span> <span class="n">install</span> <span class="c1"># to install ccs_fit</span>
 </pre></div>
 </div>
-</section>
-<section id="environment-variables">
-<h3>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading"></a></h3>
-<p>Set the following environment variables:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$export PYTHONPATH=&lt;path-to-CCS-package&gt;:$PYTHONPATH
-$export PATH=&lt;path-to-CCS-bin&gt;:$PATH
+<!---
+### Environment Variables
+Set the following environment variables:
+```
+$export PYTHONPATH=<path-to-CCS-package>:$PYTHONPATH
+$export PATH=<path-to-CCS-bin>:$PATH
 
 Within a conda virtual environment, you can update the path by using:
-conda develop &lt;path-to-CCS-package&gt;
-</pre></div>
-</div>
+conda develop <path-to-CCS-package>
+```
+--->
 </section>
 </section>
 <section id="tutorials">
@@ -278,7 +291,7 @@ conda develop &lt;path-to-CCS-package&gt;
 </section>
 <section id="funding">
 <h2>Funding<a class="headerlink" href="#funding" title="Permalink to this heading"></a></h2>
-<p>This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 957189.</p>
+<p>This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 957189, and the Swedish National Strategic e-Science programme eSSENCE.</p>
 </section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this heading"></a></h2>
@@ -286,7 +299,7 @@ conda develop &lt;path-to-CCS-package&gt;
 </section>
 <section id="acknowledgement">
 <h2>Acknowledgement<a class="headerlink" href="#acknowledgement" title="Permalink to this heading"></a></h2>
-<p>We thank all the members of  <a class="reference external" href="http://www.teoroo.kemi.uu.se/">TEOROO-group</a> at Uppsala University, Sweden.</p>
+<p>We want to thank Pavlin Mitev, Christof Köhler, Matthew Wolf, Kersti Hermansson, Bálint Aradi and Tammo van der Heide, and all the members of the <a class="reference external" href="http://www.teoroo.kemi.uu.se/">TEOROO-group</a> at Uppsala University, Sweden for fruitful discussions and general support.</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -296,7 +309,7 @@ conda develop &lt;path-to-CCS-package&gt;
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="gen_ccs.html" class="btn btn-neutral float-right" title="CSS repulsive potential generation (2-body)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Basic_Tutorial.html" class="btn btn-neutral float-right" title="Basic Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

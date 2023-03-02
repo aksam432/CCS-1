@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ccs_fit.scripts.ccs_build_db &mdash; CCS  documentation</title>
+  <title>ccs_fit.scripts.ccs_build_db &mdash; CCS_fit  documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
@@ -22,7 +22,7 @@
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="ccs_fit.scripts.ccs_export_sktable" href="../ccs_export_sktable/index.html" />
+    <link rel="next" title="ccs_fit.scripts.ccs_export_FF" href="../ccs_export_FF/index.html" />
     <link rel="prev" title="ccs_fit.scripts" href="../index.html" /> 
 </head>
 
@@ -31,7 +31,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> CCS
+            <a href="../../../../index.html" class="icon icon-home"> CCS_fit
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -42,7 +42,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../../../gen_ccs.html">CSS repulsive potential generation (2-body)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Basic_Tutorial.html">Basic Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_fit</span></code></a><ul class="current">
@@ -56,8 +56,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../../regression/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">regression</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../timing/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">timing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../regression/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">regression</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../ccs_ase_calculator/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_ase_calculator</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../ccs_ppmd/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_ppmd</span></code></a></li>
 </ul>
@@ -70,7 +70,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../../index.html">CCS</a>
+          <a href="../../../../index.html">CCS_fit</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -113,7 +113,7 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="ccs_fit.scripts.ccs_build_db.ccs_build_db">
-<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_build_db.</span></span><span class="sig-name descname"><span class="pre">ccs_build_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DFT_DB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DFTB_DB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">greedy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">greed_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_build_db.html#ccs_build_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_build_db.ccs_build_db" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_build_db.</span></span><span class="sig-name descname"><span class="pre">ccs_build_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DFT_DB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DFTB_DB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">greedy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">greed_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_build_db.html#ccs_build_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_build_db.ccs_build_db" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -130,7 +130,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="ccs_fit.scripts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../ccs_export_sktable/index.html" class="btn btn-neutral float-right" title="ccs_fit.scripts.ccs_export_sktable" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../ccs_export_FF/index.html" class="btn btn-neutral float-right" title="ccs_fit.scripts.ccs_export_FF" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

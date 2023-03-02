@@ -35,16 +35,18 @@ Functions
    :rtype: A list of distances
 
 
-.. py:function:: ccs_fetch(mode=None, DFT_DB=None, R_c=6.0, Ns='all', DFTB_DB=None, charge_dict=None)
+.. py:function:: ccs_fetch(mode=None, DFT_DB=None, R_c=6.0, Ns='all', DFTB_DB=None, charge_dict=None, include_forces=False, verbose=False)
 
    Function to read files and output structures.json
 
    Input
    -----
-       args : list
-           list of filenames
+       mode : string
+           To what target the spline should be fitted. Options are [CCS,CCS+Q,DFTB]
+       DFT_DB : string
+           optional: target database
        R_c : float
-           optional: Distance cut-off. Defaults to 7.0.
+           optional: Distance cut-off. Defaults to 6.0.
 
    :returns: **structures.json** -- Collection of structures in .json format.
    :rtype: JSON file

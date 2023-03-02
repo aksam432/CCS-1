@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ccs_fit.scripts.ccs_build_db &mdash; CCS  documentation</title>
+  <title>ccs_fit.scripts.ccs_build_db &mdash; CCS_fit  documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
@@ -28,7 +28,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> CCS
+            <a href="../../../index.html" class="icon icon-home"> CCS_fit
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -39,7 +39,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../gen_ccs.html">CSS repulsive potential generation (2-body)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Basic_Tutorial.html">Basic Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">CCS</a>
+          <a href="../../../index.html">CCS_fit</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -84,29 +84,35 @@
 <span class="kn">from</span> <span class="nn">ase.units</span> <span class="kn">import</span> <span class="n">Bohr</span><span class="p">,</span> <span class="n">Hartree</span>
 
 
-<div class="viewcode-block" id="ccs_build_db"><a class="viewcode-back" href="../../../autoapi/ccs_fit/scripts/ccs_build_db/index.html#ccs_fit.scripts.ccs_build_db.ccs_build_db">[docs]</a><span class="k">def</span> <span class="nf">ccs_build_db</span><span class="p">(</span>
+<div class="viewcode-block" id="ccs_build_db"><a class="viewcode-back" href="../../../autoapi/ccs_fit/scripts/ccs_build_db/index.html#ccs_fit.ccs_build_db">[docs]</a><span class="k">def</span> <span class="nf">ccs_build_db</span><span class="p">(</span>
     <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">DFT_DB</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">DFTB_DB</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">file_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">greedy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">greed_threshold</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">AUtoEvA</span> <span class="o">=</span> <span class="n">Hartree</span> <span class="o">/</span> <span class="n">Bohr</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">DFT_DB</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="s2">&quot;DFT database already exists. Please delete the file or use another file name.&quot;</span>
-        <span class="p">)</span>
-        
+        <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">DFT_DB</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;DFT database already exists. Please delete the file or use another file name.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
     <span class="n">DFT_DB</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">DFT_DB</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;DFTB&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">DFTB_DB</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="nb">print</span><span class="p">(</span>
                 <span class="s2">&quot;DFTB database already exists. Please delete the file or use another file name.&quot;</span>
             <span class="p">)</span>
+            <span class="n">exit</span><span class="p">()</span>
         <span class="n">DFTB_DB</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">DFTB_DB</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -216,20 +222,38 @@
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../autoapi/ccs_fit/scripts/ccs_build_db/index.html#ccs_fit.scripts.ccs_build_db.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-
-    <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">columns</span>
-    <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="n">c</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../autoapi/ccs_fit/scripts/ccs_build_db/index.html#ccs_fit.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">argparse</span>
 
     <span class="k">try</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="n">c</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
         <span class="kn">import</span> <span class="nn">art</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="n">art</span><span class="o">.</span><span class="n">text2art</span><span class="p">(</span><span class="s1">&#39;CCS:Build DB&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">pass</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;CCS fetching tool&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;--mode&quot;</span><span class="p">,</span>         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;CCS&#39;</span><span class="p">,</span>  <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Mode. Availble option: CCS, DFTB&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--DFT_DB&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;DFT.db&#39;</span><span class="p">,</span>  <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of DFT reference data-base&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-dd&quot;</span><span class="p">,</span> <span class="s2">&quot;--DFTB_DB&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of DFTB reference data-base&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-g&quot;</span><span class="p">,</span> <span class="s2">&quot;--greedy&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>  <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Extract geometry optmization steps from OUTCAR&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-gt&quot;</span><span class="p">,</span> <span class="s2">&quot;--greed_threshold&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;minimum energy difference between steps extracted using option -g&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Verbose output&quot;</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">ccs_build_db</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    USAGE:  ccs_build_db MODE [...] &quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
@@ -261,11 +285,14 @@
         <span class="n">ccs_build_db</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">DFT_DB</span><span class="o">=</span><span class="n">DFT_data</span><span class="p">,</span>
                      <span class="n">DFTB_DB</span><span class="o">=</span><span class="n">DFTB_data</span><span class="p">,</span> <span class="n">file_list</span><span class="o">=</span><span class="n">file_list</span><span class="p">)</span>
 
-    <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">columns</span>
-    <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="n">c</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="n">c</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
