@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ccs_fit.scripts.ccs_export_FF &mdash; CCS_fit  documentation</title>
@@ -31,11 +31,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> CCS_fit
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            CCS_fit
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,8 +62,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../timing/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">timing</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../regression/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">regression</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../ccs_ase_calculator/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_ase_calculator</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../ccs_ppmd/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_ppmd</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../buck/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">buck</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ccs_ase_calculator/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_ase_calculator</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ccs_ase_G2B/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_ase_G2B</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -77,7 +83,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
           <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_fit</span></code></a></li>
           <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ccs_fit.scripts</span></code></a></li>
@@ -98,10 +104,6 @@
 <section id="functions">
 <h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.Buckingham" title="ccs_fit.scripts.ccs_export_FF.Buckingham"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buckingham</span></code></a>(r, A, B, C)</p></td>
 <td><p></p></td>
@@ -109,16 +111,25 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.Lennard_Jones" title="ccs_fit.scripts.ccs_export_FF.Lennard_Jones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lennard_Jones</span></code></a>(r, eps, sigma)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.Morse" title="ccs_fit.scripts.ccs_export_FF.Morse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Morse</span></code></a>(r, De, a, re, C)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.Morse" title="ccs_fit.scripts.ccs_export_FF.Morse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Morse</span></code></a>(r, De, a, re)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF._write" title="ccs_fit.scripts.ccs_export_FF._write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_write</span></code></a>(elem1, elem2, CCS_params, f_Buck, f_LJ, f_Mor)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.Pedone" title="ccs_fit.scripts.ccs_export_FF.Pedone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pedone</span></code></a>(r, De, a, re, C)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.write_FF" title="ccs_fit.scripts.ccs_export_FF.write_FF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_FF</span></code></a>(CCS_params_file)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF._write" title="ccs_fit.scripts.ccs_export_FF._write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_write</span></code></a>(elem1, elem2, CCS_params, f_Buck, f_LJ, f_Mor, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.main" title="ccs_fit.scripts.ccs_export_FF.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.write_LAMMPS" title="ccs_fit.scripts.ccs_export_FF.write_LAMMPS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_LAMMPS</span></code></a>(jsonfile[, scale, format])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.write_GULP" title="ccs_fit.scripts.ccs_export_FF.write_GULP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_GULP</span></code></a>(jsonfile[, scale, format])</p></td>
+<td><p>spline &lt;cubic&gt; &lt;reverse&gt; &lt;intra/inter&gt; &lt;bond/x12/x13/x14/mol/o14/g14&gt; &lt;kcal/kjmol&gt; &lt;type_of_bond&gt;</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.write_FF" title="ccs_fit.scripts.ccs_export_FF.write_FF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_FF</span></code></a>(CCS_params_file)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ccs_fit.scripts.ccs_export_FF.main" title="ccs_fit.scripts.ccs_export_FF.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -135,13 +146,32 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ccs_fit.scripts.ccs_export_FF.Morse">
-<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_export_FF.</span></span><span class="sig-name descname"><span class="pre">Morse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">De</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">re</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_export_FF.html#Morse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_export_FF.Morse" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_export_FF.</span></span><span class="sig-name descname"><span class="pre">Morse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">De</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">re</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_export_FF.html#Morse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_export_FF.Morse" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ccs_fit.scripts.ccs_export_FF.Pedone">
+<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_export_FF.</span></span><span class="sig-name descname"><span class="pre">Pedone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">De</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">re</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_export_FF.html#Pedone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_export_FF.Pedone" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ccs_fit.scripts.ccs_export_FF._write">
-<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_export_FF.</span></span><span class="sig-name descname"><span class="pre">_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elem1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CCS_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_Buck</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_LJ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_Mor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_export_FF.html#_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_export_FF._write" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_export_FF.</span></span><span class="sig-name descname"><span class="pre">_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elem1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CCS_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_Buck</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_LJ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_Mor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_Ped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_export_FF.html#_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_export_FF._write" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ccs_fit.scripts.ccs_export_FF.write_LAMMPS">
+<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_export_FF.</span></span><span class="sig-name descname"><span class="pre">write_LAMMPS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jsonfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lammps'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_export_FF.html#write_LAMMPS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_export_FF.write_LAMMPS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ccs_fit.scripts.ccs_export_FF.write_GULP">
+<span class="sig-prename descclassname"><span class="pre">ccs_fit.scripts.ccs_export_FF.</span></span><span class="sig-name descname"><span class="pre">write_GULP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jsonfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GULP'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ccs_fit/scripts/ccs_export_FF.html#write_GULP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ccs_fit.scripts.ccs_export_FF.write_GULP" title="Permalink to this definition"></a></dt>
+<dd><p>spline &lt;cubic&gt; &lt;reverse&gt; &lt;intra/inter&gt; &lt;bond/x12/x13/x14/mol/o14/g14&gt; &lt;kcal/kjmol&gt; &lt;type_of_bond&gt;
+atom1 atom2 &lt;shift&gt; &lt;rmin&gt; rmax &lt;1*flag&gt;
+energy_1 distance_1
+energy_2 distance_2</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ccs_fit.scripts.ccs_export_FF.write_FF">

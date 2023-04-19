@@ -1,7 +1,7 @@
-:py:mod:`ccs_ase_calculator`
-============================
+:py:mod:`buck`
+==============
 
-.. py:module:: ccs_ase_calculator
+.. py:module:: buck
 
 
 Module Contents
@@ -12,8 +12,8 @@ Classes
 
 .. autoapisummary::
 
-   ccs_ase_calculator.spline_table
-   ccs_ase_calculator.CCS
+   buck.spline_table
+   buck.Buck
 
 
 
@@ -22,7 +22,7 @@ Functions
 
 .. autoapisummary::
 
-   ccs_ase_calculator.ew
+   buck.ew
 
 
 
@@ -38,7 +38,7 @@ Functions
 .. py:function:: ew(atoms, q)
 
 
-.. py:class:: CCS(CCS_params=None, charge=None, q=None, charge_scaling=False, **kwargs)
+.. py:class:: Buck(CCS_params=None, charge=None, q=None, charge_scaling=False, **kwargs)
 
    Bases: :py:obj:`ase.calculators.calculator.Calculator`
 
@@ -46,6 +46,15 @@ Functions
 
    Curvature constrained splines calculator compatible with the ASE
    format.
+
+   :param input_file: To be added, Jolla.
+   :type input_file: XXX
+
+   :rtype: What does it return actually, Jolla?
+
+   .. rubric:: Examples
+
+   >>> To be added, Jolla.
 
    .. py:attribute:: implemented_properties
 

@@ -1,7 +1,7 @@
-:py:mod:`ccs_ase_calculator`
-============================
+:py:mod:`ccs_ase_G2B`
+=====================
 
-.. py:module:: ccs_ase_calculator
+.. py:module:: ccs_ase_G2B
 
 
 Module Contents
@@ -12,8 +12,8 @@ Classes
 
 .. autoapisummary::
 
-   ccs_ase_calculator.spline_table
-   ccs_ase_calculator.CCS
+   ccs_ase_G2B.G2B_pair
+   ccs_ase_G2B.G2B
 
 
 
@@ -22,11 +22,11 @@ Functions
 
 .. autoapisummary::
 
-   ccs_ase_calculator.ew
+   ccs_ase_G2B.ew
 
 
 
-.. py:class:: spline_table(elem1, elem2, CCS_params, exp=True)
+.. py:class:: G2B_pair(elem1, elem2, G2B_params, exp=True)
 
    .. py:method:: eval_energy(r)
 
@@ -38,14 +38,23 @@ Functions
 .. py:function:: ew(atoms, q)
 
 
-.. py:class:: CCS(CCS_params=None, charge=None, q=None, charge_scaling=False, **kwargs)
+.. py:class:: G2B(G2B_params=None, charge=None, q=None, charge_scaling=False, **kwargs)
 
    Bases: :py:obj:`ase.calculators.calculator.Calculator`
 
-   CCS calculator
+   General analyical 2B calculator
 
    Curvature constrained splines calculator compatible with the ASE
    format.
+
+   :param input_file: To be added, Jolla.
+   :type input_file: G2B.params
+
+   :rtype: What does it return actually, Jolla?
+
+   .. rubric:: Examples
+
+   >>> To be added, Jolla.
 
    .. py:attribute:: implemented_properties
 

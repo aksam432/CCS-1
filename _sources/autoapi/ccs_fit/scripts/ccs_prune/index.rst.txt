@@ -1,7 +1,7 @@
-:py:mod:`ccs_fit.scripts.ccs_validate`
-======================================
+:py:mod:`ccs_fit.scripts.ccs_prune`
+===================================
 
-.. py:module:: ccs_fit.scripts.ccs_validate
+.. py:module:: ccs_fit.scripts.ccs_prune
 
 
 Module Contents
@@ -13,12 +13,12 @@ Functions
 
 .. autoapisummary::
 
-   ccs_fit.scripts.ccs_validate.ccs_validate
-   ccs_fit.scripts.ccs_validate.main
+   ccs_fit.scripts.ccs_prune.ccs_prune
+   ccs_fit.scripts.ccs_prune.main
 
 
 
-.. py:function:: ccs_validate(mode=None, CCS_params=None, Ns='all', DFT_DB='DFT.db', CCS_DB='CCS_validate.db', DFTB_DB=None, charge_dict=None, charge_scaling=False, include_forces=False, verbose=False)
+.. py:function:: ccs_prune(mode=None, CCS_params=None, Ns='all', DFT_DB='DFT.db', CCS_DB='CCS_pruned.db', DFTB_DB=None, charge_dict=None, charge_scaling=False, include_forces=False, verbose=False)
 
    Function to verify database generation.
    ---------------------------------------
@@ -31,7 +31,7 @@ Functions
                CCS+Q: CCS_params_file(string) NumberOfSamples(int) DFT.db(string) charge_dict(string) charge_scaling(bool)")
                DFTB:  CCS_params_file(string) NumberOfSamples(int) DFT.db(string) DFTB.db(string)")
 
-   :rtype: To be specified.
+   :rtype: What does it return Jolla?
 
    Example usage
    -------------
